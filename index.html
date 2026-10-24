@@ -109,6 +109,8 @@
   .edit-title-btn:hover { opacity: 1; background: var(--surface-2); }
   .empty-state { text-align: center; padding: 80px 20px; color: var(--muted); }
   .empty-state .big { font-size: 3rem; margin-bottom: 12px; }
+  
+  /* --- Профиль --- */
   .profile-header {
     max-width: 1400px; margin: 32px auto 0; padding: 0 20px;
     display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap;
@@ -143,7 +145,20 @@
   .stat .num { font-size: 1.25rem; font-weight: 800; transition: color 0.15s; }
   .stat .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
   .profile-section-title { max-width: 1400px; margin: 40px auto 0; padding: 0 20px; font-size: 1.1rem; font-weight: 700; }
-  .profile-upload { max-width: 1400px; margin: 16px auto 0; padding: 0 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .profile-upload { max-width: 1400px; margin: 16px auto 0; padding: 0 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  
+  /* --- Экран Помощи --- */
+  .help-container {
+    max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6;
+  }
+  .help-container h2 { font-size: 1.8rem; margin-bottom: 20px; }
+  .help-container h3 { font-size: 1.2rem; margin-top: 30px; margin-bottom: 10px; color: var(--accent); }
+  .help-container p { margin-bottom: 15px; color: #d0d0d0; }
+  .help-container ul { margin-bottom: 15px; padding-left: 20px; color: #d0d0d0; }
+  .help-container li { margin-bottom: 8px; }
+  .help-container code { background: var(--surface-2); padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+
+  /* --- Лайтбокс --- */
   #lightbox {
     position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none;
     align-items: center; justify-content: center; z-index: 100; padding: 20px;
@@ -156,6 +171,8 @@
     font-size: 1.4rem; cursor: pointer;
   }
   #lightbox .close:hover { background: rgba(255,255,255,0.25); }
+  
+  /* --- Модалки --- */
   .modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none;
     align-items: center; justify-content: center; z-index: 150; padding: 20px;
@@ -262,6 +279,7 @@
     <button type="button" class="nav-tab active" data-screen="feed">Лента</button>
     <button type="button" class="nav-tab" data-screen="profile">Моя страница</button>
     <button type="button" class="nav-tab" data-screen="liked">Понравившиеся</button>
+    <button type="button" class="nav-tab" data-screen="help">Помощь</button>
   </div>
   <div class="search-wrap">
     <span class="icon">🔍</span>
@@ -298,9 +316,9 @@
       <div class="stats">
         <div class="stat"><span class="num" id="statCount">0</span><span class="label">Картинок</span></div>
         <div class="stat"><span class="num" id="statLikes">0</span><span class="label">Лайков</span></div>
-        <button type="button" class="stat clickable" id="statFollowersBtn" title="Показать подписчиков">
+        <button type="button" class="stat clickable" id="statFollowersBtn" title="Показать друзей">
           <span class="num" id="statFollowers">0</span>
-          <span class="label">Подписчики</span>
+          <span class="label">Друзья</span>
         </button>
       </div>
     </div>
@@ -308,6 +326,7 @@
   <div class="profile-upload">
     <button type="button" class="upload-btn" id="uploadBtnProfile">+ Загрузить на страницу</button>
     <button type="button" class="upload-btn secondary" id="exportBtnProfile">💾 Скачать копию</button>
+    <button type="button" class="upload-btn secondary" id="helpBtnProfile" style="margin-left: auto;">❓ Помощь</button>
   </div>
   <div class="profile-section-title">Мои картинки</div>
   <div id="profileGrid"></div>
@@ -316,6 +335,38 @@
 <div class="screen" id="screen-liked">
   <div class="profile-section-title" style="margin-top:32px;">Понравившиеся</div>
   <div id="likedGrid"></div>
+</div>
+
+<!-- ЭКРАН ПОМОЩИ -->
+<div class="screen" id="screen-help">
+  <div class="help-container">
+    <h2>Как пользоваться Pinboard</h2>
+    
+    <h3>1. Как добавить картинки?</h3>
+    <p>Вы можете перетащить изображения прямо в окно (на вкладке «Лента») или нажать кнопку «+ Загрузить». После этого появится окно, где можно дать картинке название. Поддерживаются форматы JPG, PNG, GIF и WEBP.</p>
+    
+    <h3>2. Где хранятся мои данные?</h3>
+    <p><b>Важно:</b> этот сайт работает полностью в вашем браузере и не имеет сервера. Это значит, что все картинки, лайки и настройки профиля сохраняются <b>только на том устройстве</b>, на котором вы их загрузили (в памяти браузера).</p>
+    <p>Если вы загрузите картинку с телефона, на компьютере вы её не увидите. И наоборот. Это не ошибка, а ограничение статического сайта.</p>
+    
+    <h3>3. Как перенести картинки на другое устройство?</h3>
+    <p>Так как автоматической синхронизации нет, вы можете использовать резервные копии:</p>
+    <ul>
+      <li>Нажмите кнопку <b>«💾 Данные»</b> вверху сайта.</li>
+      <li>Нажмите <b>«Скачать копию сейчас (JSON)»</b>. У вас скачается файл.</li>
+      <li>Перешлите этот файл на другое устройство (например, через мессенджер).</li>
+      <li>Откройте сайт на другом устройстве, нажмите <b>«💾 Данные» → «Восстановить из файла»</b> и выберите этот файл.</li>
+    </ul>
+
+    <h3>4. Что такое автосохранение в файл?</h3>
+    <p>В браузерах Chrome и Edge (на компьютере) вы можете включить автосохранение в файл. Сайт будет автоматически перезаписывать файл <code>pinboard-autosave.json</code> на вашем диске при каждом изменении. Это защитит вашу коллекцию, если вы случайно очистите кэш браузера.</p>
+    
+    <h3>5. Как удалить все данные?</h3>
+    <p>Нажмите <b>«💾 Данные» → «🗑️ Удалить все данные»</b>. Сайт спросит подтверждение, и только после нажатия «Да» все картинки, лайки и профиль будут стерты. Это действие необратимо.</p>
+
+    <h3>6. Почему нет друзей?</h3>
+    <p>В этой версии сайта нет сервера и аккаунтов, поэтому другие люди не могут зарегистрироваться или добавить вас в друзья. Цифра «0» в профиле — это заглушка на будущее. Когда сайт переедет на полноценный сервер, друзья и подписки станут реальными.</p>
+  </div>
 </div>
 
 <div id="lightbox">
@@ -378,9 +429,9 @@
 <div class="modal-overlay followers-modal" id="followersModal">
   <div class="modal">
     <div class="followers-icon">👥</div>
-    <h3>Подписчики</h3>
-    <p id="followersCountText">Пока подписчиков нет.</p>
-    <p class="followers-hint">Подписчики появятся, когда сайт будет на сервере и другие пользователи смогут подписываться на ваш профиль. В локальной версии все данные хранятся только в вашем браузере.</p>
+    <h3>Друзья</h3>
+    <p id="followersCountText">Пока друзей нет.</p>
+    <p class="followers-hint">Друзья появятся, когда сайт будет на сервере и другие пользователи смогут добавлять вас в друзья. В локальной версии все данные хранятся только в вашем браузере.</p>
     <div class="followers-actions">
       <button type="button" id="followersModalClose">Понятно</button>
     </div>
@@ -536,11 +587,9 @@ function buildBackupPayload() {
    Восстановление при запуске
    ========================================================= */
 async function restoreAll() {
-  // 1) IndexedDB
   let restoredImages = await idbGet('images');
   let restoredProfile = await idbGet('profile');
 
-  // 2) localStorage — если в IDB пусто
   if (!Array.isArray(restoredImages) || restoredImages.length === 0) {
     try {
       const raw = JSON.parse(localStorage.getItem(LS_IMAGES_KEY));
@@ -554,7 +603,6 @@ async function restoreAll() {
     } catch (e) {}
   }
 
-  // 3) Файл автосохранения — если IDB и LS пусты и есть handle
   const savedHandle = await idbGet('autosaveHandle');
   if (savedHandle && savedHandle.name === AUTOSAVE_FILENAME) {
     autosaveHandle = savedHandle;
@@ -639,6 +687,7 @@ const clearAllBtn    = document.getElementById('clearAllBtn');
 const storageInfo    = document.getElementById('storageInfo');
 const enableAutosaveBtn = document.getElementById('enableAutosaveBtn');
 const autosaveStatusEl = document.getElementById('autosaveStatus');
+const helpBtnProfile = document.getElementById('helpBtnProfile');
 
 const followersModal      = document.getElementById('followersModal');
 const followersModalClose = document.getElementById('followersModalClose');
@@ -662,7 +711,13 @@ function switchScreen(name) {
   document.querySelectorAll('.screen').forEach(s => {
     s.classList.toggle('active', s.id === 'screen-' + name);
   });
-  render();
+  // Очищаем поиск при переходе на страницу помощи
+  if (name === 'help') {
+    searchInput.value = '';
+    searchQuery = '';
+  } else {
+    render();
+  }
 }
 
 /* =========================================================
@@ -867,6 +922,8 @@ function fillGrid(gridEl, list, emptyHTML) {
    Рендер
    ========================================================= */
 function render() {
+  if (currentScreen === 'help') return;
+  
   applyProfileToUI();
   const q = searchQuery.trim().toLowerCase();
   const matches = img => !q || (img.name || '').toLowerCase().includes(q);
@@ -947,7 +1004,12 @@ fileInput.addEventListener('change', () => { handleFiles(fileInput.files); fileI
   dropInner.addEventListener(evt, (e) => { e.preventDefault(); dropInner.classList.remove('dragover'); });
 });
 dropInner.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files));
-searchInput.addEventListener('input', () => { searchQuery = searchInput.value; render(); });
+searchInput.addEventListener('input', () => { searchQuery = searchInput.value; if (currentScreen !== 'help') render(); });
+
+/* =========================================================
+   Помощь
+   ========================================================= */
+helpBtnProfile.addEventListener('click', () => switchScreen('help'));
 
 /* =========================================================
    Лайтбокс
@@ -965,11 +1027,11 @@ document.addEventListener('keydown', (e) => {
 });
 
 /* =========================================================
-   Подписчики
+   Друзья
    ========================================================= */
 function openFollowersModal() {
   const count = profile.followers || 0;
-  followersCountText.textContent = count === 0 ? 'Пока подписчиков нет.' : 'Подписчиков: ' + count;
+  followersCountText.textContent = count === 0 ? 'Пока друзей нет.' : 'Друзей: ' + count;
   followersModal.classList.add('open');
 }
 function closeFollowersModal() { followersModal.classList.remove('open'); }
@@ -1167,7 +1229,6 @@ async function init() {
     showToast('Добро пожаловать! Всё сохраняется автоматически.');
   }
 
-  // Если автосохранение было включено, но разрешение сброшено — тихо проверим
   if (autosaveHandle && !autosaveEnabled) {
     try {
       const perm = await autosaveHandle.queryPermission({ mode: 'readwrite' });
