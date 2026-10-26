@@ -48,9 +48,12 @@
   .empty-state { text-align: center; padding: 80px 20px; color: var(--muted); }
   .empty-state .big { font-size: 3rem; margin-bottom: 12px; }
   
+  /* Профиль */
   .profile-header { max-width: 1400px; margin: 32px auto 0; padding: 0 20px; display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
   .avatar-wrap { position: relative; flex-shrink: 0; }
   .avatar { width: 96px; height: 96px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #ff6b6b); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: #fff; box-shadow: 0 8px 24px rgba(230,0,35,0.35); overflow: hidden; background-size: cover; background-position: center; }
+  .avatar-edit { position: absolute; bottom: -2px; right: -2px; width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); border: 2px solid var(--bg); color: var(--text); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .avatar-edit:hover { background: #383838; }
   .profile-info { flex: 1; min-width: 220px; }
   .profile-info h2 { margin: 0 0 4px; font-size: 1.5rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .profile-info .sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 12px; }
@@ -61,11 +64,23 @@
   .profile-section-title { max-width: 1400px; margin: 40px auto 0; padding: 0 20px; font-size: 1.1rem; font-weight: 700; }
   .profile-upload { max-width: 1400px; margin: 16px auto 0; padding: 0 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
   
-  .help-container { max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
-  .help-container h2 { font-size: 1.8rem; margin-bottom: 20px; }
-  .help-container h3 { font-size: 1.2rem; margin-top: 30px; margin-bottom: 10px; color: var(--accent); }
-  .help-container p { margin-bottom: 15px; color: #d0d0d0; }
-  
+  /* Модалки */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 150; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border-radius: 16px; padding: 24px; width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); max-height: 90vh; overflow-y: auto; }
+  .modal h3 { margin: 0 0 16px; font-size: 1.1rem; }
+  .modal label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; margin-top: 14px; }
+  .modal input[type="text"], .modal textarea { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #3a3a3a; background: var(--surface-2); color: var(--text); font-size: 0.95rem; outline: none; font-family: inherit; resize: vertical; }
+  .modal input[type="text"]:focus, .modal textarea:focus { border-color: var(--accent); }
+  .modal .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .modal button { padding: 10px 18px; border-radius: 999px; border: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+  .modal .cancel { background: var(--surface-2); color: var(--text); }
+  .modal .cancel:hover { background: #383838; }
+  .modal .confirm { background: var(--accent); color: #fff; }
+  .modal .confirm:hover { background: var(--accent-hover); }
+  .modal-avatar-row { display: flex; align-items: center; gap: 14px; margin-top: 6px; flex-wrap: wrap; }
+  .modal-avatar-preview { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #ff6b6b); background-size: cover; background-position: center; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; overflow: hidden; }
+
   #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
   #lightbox.open { display: flex; }
   #lightbox img { max-width: 95vw; max-height: 90vh; border-radius: 12px; }
@@ -83,14 +98,14 @@
     <button type="button" class="nav-tab active" data-screen="feed">Лента</button>
     <button type="button" class="nav-tab" data-screen="profile">Моя страница</button>
     <button type="button" class="nav-tab" data-screen="liked">Понравившиеся</button>
-    <button type="button" class="nav-tab" data-screen="help">Помощь</button>
   </div>
   <div class="search-wrap">
     <span class="icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="Поиск...">
+    <input type="text" id="searchInput" placeholder="Поиск по названию...">
   </div>
   <button type="button" class="upload-btn" id="uploadBtn">+ Загрузить</button>
   <input type="file" id="fileInput" accept="image/*" multiple hidden>
+  <input type="file" id="avatarInput" accept="image/*" hidden>
 </header>
 
 <div class="screen active" id="screen-feed">
@@ -102,17 +117,25 @@
 
 <div class="screen" id="screen-profile">
   <div class="profile-header">
-    <div class="avatar-wrap"><div class="avatar" id="avatar">Я</div></div>
+    <div class="avatar-wrap">
+      <div class="avatar" id="avatar">Я</div>
+      <button type="button" class="avatar-edit" id="avatarEditBtn">📷</button>
+    </div>
     <div class="profile-info">
-      <h2><span id="profileName">Мой профиль</span></h2>
-      <div class="sub">Ваша коллекция</div>
+      <h2>
+        <span id="profileName">Мой профиль</span>
+        <button type="button" class="upload-btn secondary" id="editProfileBtn" style="font-size:0.8rem;padding:8px 14px;">Редактировать</button>
+      </h2>
+      <div class="sub" id="profileBio">Здесь ваши картинки</div>
       <div class="stats">
         <div class="stat"><span class="num" id="statCount">0</span><span class="label">Картинок</span></div>
         <div class="stat"><span class="num" id="statLikes">0</span><span class="label">Лайков</span></div>
       </div>
     </div>
   </div>
-  <div class="profile-upload"><button type="button" class="upload-btn" id="uploadBtnProfile">+ Загрузить на страницу</button></div>
+  <div class="profile-upload">
+    <button type="button" class="upload-btn" id="uploadBtnProfile">+ Загрузить на страницу</button>
+  </div>
   <div class="profile-section-title">Мои картинки</div>
   <div id="profileGrid"></div>
 </div>
@@ -122,25 +145,36 @@
   <div id="likedGrid"></div>
 </div>
 
-<div class="screen" id="screen-help">
-  <div class="help-container">
-    <h2>Помощь</h2>
-    <h3>Синхронизация</h3>
-    <p>Сайт подключен к серверу Firebase. Все картинки сохраняются в облаке. Загрузите фото с телефона — оно появится на компьютере.</p>
-    <h3>Загрузка</h3>
-    <p>Нажмите «+ Загрузить» или перетащите файлы. Картинка отправится на сервер.</p>
+<div id="lightbox"><button type="button" class="close" id="lightboxClose">✕</button><img id="lightboxImg" src="" alt=""></div>
+
+<!-- Модалка профиля -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal">
+    <h3>Редактировать профиль</h3>
+    <label>Имя</label>
+    <input type="text" id="profileNameInput" placeholder="Ваше имя" maxlength="40">
+    <label>Описание</label>
+    <textarea id="profileBioInput" rows="3" placeholder="О себе" maxlength="160"></textarea>
+    <label>Аватар</label>
+    <div class="modal-avatar-row">
+      <div class="modal-avatar-preview" id="modalAvatarPreview">Я</div>
+      <button type="button" class="upload-btn secondary" id="modalAvatarBtn" style="font-size:0.85rem;">Загрузить</button>
+      <button type="button" class="upload-btn secondary" id="modalAvatarRemove" style="font-size:0.85rem;">Убрать</button>
+    </div>
+    <div class="actions">
+      <button type="button" class="cancel" id="profileModalCancel">Отмена</button>
+      <button type="button" class="confirm" id="profileModalConfirm">Сохранить</button>
+    </div>
   </div>
 </div>
 
-<div id="lightbox"><button type="button" class="close" id="lightboxClose">✕</button><img id="lightboxImg" src="" alt=""></div>
 <div id="toast"></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-  // ВАШИ КЛЮЧИ
   const firebaseConfig = {
     apiKey: "AIzaSyB0DUpOJWSOX8pJ52q-AAJwpNSzzSlEv1g",
     authDomain: "my-pinboard-dab6c.firebaseapp.com",
@@ -156,11 +190,14 @@
 
   let images = [];
   let searchQuery = '';
+  let profile = { name: 'Мой профиль', bio: 'Здесь ваши картинки', avatar: '' };
+  let pendingAvatarDataUrl = null;
 
   const feedGrid = document.getElementById('feedGrid');
   const profileGrid = document.getElementById('profileGrid');
   const likedGrid = document.getElementById('likedGrid');
   const fileInput = document.getElementById('fileInput');
+  const avatarInput = document.getElementById('avatarInput');
   const toastEl = document.getElementById('toast');
 
   function showToast(msg) {
@@ -169,7 +206,7 @@
     setTimeout(() => toastEl.classList.remove('show'), 3000);
   }
 
-  // Слушаем базу данных в реальном времени
+  // 1. СИНХРОНИЗАЦИЯ КАРТИНОК
   const q = query(collection(db, "images"), orderBy("time", "desc"));
   onSnapshot(q, (snapshot) => {
     images = [];
@@ -177,15 +214,32 @@
       images.push({ id: doc.id, ...doc.data() });
     });
     render();
-  }, (error) => {
-    console.error(error);
-    feedGrid.innerHTML = '<div class="empty-state" style="color:red;">Ошибка подключения к БД</div>';
   });
+
+  // 2. СИНХРОНИЗАЦИЯ ПРОФИЛЯ (один документ с ID 'user')
+  onSnapshot(doc(db, "settings", "user"), (docSnap) => {
+    if (docSnap.exists()) {
+      profile = docSnap.data();
+      applyProfile();
+    }
+  });
+
+  function applyProfile() {
+    document.getElementById('profileName').textContent = profile.name || 'Мой профиль';
+    document.getElementById('profileBio').textContent = profile.bio || 'Здесь ваши картинки';
+    const avatarEl = document.getElementById('avatar');
+    if (profile.avatar) {
+      avatarEl.style.backgroundImage = 'url(' + profile.avatar + ')';
+      avatarEl.textContent = '';
+    } else {
+      avatarEl.style.backgroundImage = '';
+      avatarEl.textContent = (profile.name || 'Я').slice(0, 1).toUpperCase();
+    }
+  }
 
   function createCard(img) {
     const card = document.createElement('div');
     card.className = 'card';
-    
     const image = document.createElement('img');
     image.src = img.url;
     image.loading = 'lazy';
@@ -214,8 +268,7 @@
       e.stopPropagation();
       if (confirm('Удалить?')) {
         try {
-          const imageRef = ref(storage, img.url);
-          await deleteObject(imageRef).catch(()=>{});
+          await deleteObject(ref(storage, img.url)).catch(()=>{});
           await deleteDoc(doc(db, "images", img.id));
           showToast('Удалено');
         } catch (err) { showToast('Ошибка'); }
@@ -247,11 +300,9 @@
   function render() {
     const q = searchQuery.trim().toLowerCase();
     const matches = img => !q || (img.name || '').toLowerCase().includes(q);
-    
     fillGrid(feedGrid, images.filter(matches));
     fillGrid(profileGrid, images.filter(matches));
     fillGrid(likedGrid, images.filter(img => img.liked && matches(img)));
-    
     document.getElementById('statCount').textContent = images.length;
     document.getElementById('statLikes').textContent = images.filter(i => i.liked).length;
   }
@@ -266,7 +317,6 @@
         const storageRef = ref(storage, 'images/' + Date.now() + '_' + file.name);
         await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(storageRef);
-        
         await addDoc(collection(db, "images"), {
           url: downloadURL,
           name: file.name.replace(/\.[^.]+$/, ''),
@@ -276,18 +326,19 @@
         showToast('Успешно!');
       } catch (err) {
         console.error(err);
-        showToast('Ошибка загрузки');
+        showToast('Ошибка: ' + err.message);
       }
     }
   }
 
+  // Обработчики загрузки картинок
   document.getElementById('uploadBtn').onclick = () => fileInput.click();
   document.getElementById('uploadBtnProfile').onclick = () => fileInput.click();
   document.getElementById('dropInner').onclick = () => fileInput.click();
   fileInput.onchange = () => { handleFiles(fileInput.files); fileInput.value = ''; };
-  
   document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value; render(); };
   
+  // Навигация
   document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.onclick = () => {
       document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -296,6 +347,79 @@
       document.getElementById('screen-' + tab.dataset.screen).classList.add('active');
     };
   });
+
+  // Модалка профиля
+  const profileModal = document.getElementById('profileModal');
+  const profileNameInput = document.getElementById('profileNameInput');
+  const profileBioInput = document.getElementById('profileBioInput');
+  const modalAvatarPreview = document.getElementById('modalAvatarPreview');
+
+  document.getElementById('editProfileBtn').onclick = () => {
+    profileNameInput.value = profile.name || '';
+    profileBioInput.value = profile.bio || '';
+    pendingAvatarDataUrl = null;
+    updateAvatarPreview(profile.avatar);
+    profileModal.classList.add('open');
+  };
+  document.getElementById('avatarEditBtn').onclick = () => {
+    profileNameInput.value = profile.name || '';
+    profileBioInput.value = profile.bio || '';
+    pendingAvatarDataUrl = null;
+    updateAvatarPreview(profile.avatar);
+    profileModal.classList.add('open');
+  };
+  document.getElementById('profileModalCancel').onclick = () => profileModal.classList.remove('open');
+
+  function updateAvatarPreview(src) {
+    if (src) {
+      modalAvatarPreview.style.backgroundImage = 'url(' + src + ')';
+      modalAvatarPreview.textContent = '';
+    } else {
+      modalAvatarPreview.style.backgroundImage = '';
+      modalAvatarPreview.textContent = (profileNameInput.value || 'Я').slice(0, 1).toUpperCase();
+    }
+  }
+
+  document.getElementById('modalAvatarBtn').onclick = () => avatarInput.click();
+  avatarInput.onchange = async () => {
+    const file = avatarInput.files[0];
+    if (!file) return;
+    showToast('Загрузка аватара...');
+    try {
+      const storageRef = ref(storage, 'avatars/' + Date.now() + '_' + file.name);
+      await uploadBytes(storageRef, file);
+      pendingAvatarDataUrl = await getDownloadURL(storageRef);
+      updateAvatarPreview(pendingAvatarDataUrl);
+      showToast('Аватар загружен, нажмите Сохранить');
+    } catch (err) {
+      showToast('Ошибка загрузки аватара');
+    }
+    avatarInput.value = '';
+  };
+
+  document.getElementById('modalAvatarRemove').onclick = () => {
+    pendingAvatarDataUrl = '';
+    updateAvatarPreview('');
+  };
+
+  document.getElementById('profileModalConfirm').onclick = async () => {
+    const newName = profileNameInput.value.trim() || 'Мой профиль';
+    const newBio = profileBioInput.value.trim() || 'Здесь ваши картинки';
+    let newAvatar = profile.avatar || '';
+    if (pendingAvatarDataUrl !== null) newAvatar = pendingAvatarDataUrl;
+
+    try {
+      await setDoc(doc(db, "settings", "user"), {
+        name: newName,
+        bio: newBio,
+        avatar: newAvatar
+      });
+      showToast('Профиль сохранен в облаке');
+      profileModal.classList.remove('open');
+    } catch (err) {
+      showToast('Ошибка сохранения профиля');
+    }
+  };
 
   document.getElementById('lightboxClose').onclick = () => document.getElementById('lightbox').classList.remove('open');
 </script>
