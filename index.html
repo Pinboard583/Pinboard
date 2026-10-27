@@ -6,269 +6,129 @@
 <title>Pinboard — твоя коллекция</title>
 <style>
   :root {
-    --bg: #121212;
-    --surface: #1e1e1e;
-    --surface-2: #2a2a2a;
-    --text: #f1f1f1;
-    --muted: #9a9a9a;
-    --accent: #e60023;
-    --accent-hover: #ff1a3d;
-    --radius: 16px;
+    --bg: #121212; --surface: #1e1e1e; --surface-2: #2a2a2a;
+    --text: #f1f1f1; --muted: #9a9a9a; --accent: #e60023;
+    --accent-hover: #ff1a3d; --radius: 16px;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  
   header {
-    position: sticky; top: 0; z-index: 50;
-    background: rgba(18,18,18,0.85); backdrop-filter: blur(12px);
-    border-bottom: 1px solid #2a2a2a;
-    padding: 12px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 50; background: rgba(18,18,18,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid #2a2a2a; padding: 12px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
   }
   .logo { font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
   .logo .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); display: inline-block; }
   .nav-tabs { display: flex; gap: 4px; background: var(--surface); border-radius: 999px; padding: 4px; flex-wrap: wrap; }
-  .nav-tab {
-    background: transparent; border: none; color: var(--muted);
-    padding: 8px 14px; border-radius: 999px; font-size: 0.85rem; font-weight: 600;
-    cursor: pointer; transition: background 0.2s, color 0.2s; white-space: nowrap;
-  }
+  .nav-tab { background: transparent; border: none; color: var(--muted); padding: 8px 14px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; white-space: nowrap; }
   .nav-tab:hover { color: var(--text); }
   .nav-tab.active { background: var(--accent); color: #fff; }
   .search-wrap { flex: 1; min-width: 140px; position: relative; }
-  .search-wrap input {
-    width: 100%; padding: 10px 16px 10px 40px; border-radius: 999px;
-    border: 1px solid #333; background: var(--surface); color: var(--text);
-    font-size: 0.9rem; outline: none; transition: border-color 0.2s, background 0.2s;
-  }
+  .search-wrap input { width: 100%; padding: 10px 16px 10px 40px; border-radius: 999px; border: 1px solid #333; background: var(--surface); color: var(--text); font-size: 0.9rem; outline: none; transition: 0.2s; }
   .search-wrap input:focus { border-color: var(--accent); background: var(--surface-2); }
   .search-wrap .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.9rem; pointer-events: none; }
-  .upload-btn {
-    background: var(--accent); color: #fff; border: none; padding: 10px 18px;
-    border-radius: 999px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
-    white-space: nowrap; transition: background 0.2s, transform 0.1s;
-  }
-  .upload-btn:hover { background: var(--accent-hover); }
-  .upload-btn:active { transform: scale(0.97); }
-  .upload-btn.secondary { background: var(--surface-2); color: var(--text); }
-  .upload-btn.secondary:hover { background: #383838; }
+  .btn { background: var(--accent); color: #fff; border: none; padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+  .btn:hover { background: var(--accent-hover); }
+  .btn.secondary { background: var(--surface-2); color: var(--text); }
+  .btn.secondary:hover { background: #383838; }
+  .btn.blue { background: #2196F3; color: #fff; }
+  .btn.blue:hover { background: #1976D2; }
+  
   .screen { display: none; }
   .screen.active { display: block; }
+  
   #dropZone { max-width: 1400px; margin: 20px auto 0; padding: 0 20px; }
-  .drop-inner {
-    border: 2px dashed #3a3a3a; border-radius: var(--radius); padding: 32px 20px;
-    text-align: center; color: var(--muted); font-size: 0.95rem;
-    transition: border-color 0.2s, background 0.2s; cursor: pointer;
-  }
+  .drop-inner { border: 2px dashed #3a3a3a; border-radius: var(--radius); padding: 32px 20px; text-align: center; color: var(--muted); font-size: 0.95rem; transition: 0.2s; cursor: pointer; }
   .drop-inner:hover, .drop-inner.dragover { border-color: var(--accent); background: rgba(230,0,35,0.06); color: var(--text); }
-  .drop-inner strong { color: var(--text); }
-  #feedGrid, #profileGrid, #likedGrid {
-    max-width: 1400px; margin: 24px auto 60px; padding: 0 20px;
-    column-count: 4; column-gap: 16px;
-  }
-  @media (max-width: 1100px) { #feedGrid, #profileGrid, #likedGrid { column-count: 3; } }
-  @media (max-width: 800px)  { #feedGrid, #profileGrid, #likedGrid { column-count: 2; } }
-  @media (max-width: 500px)  { #feedGrid, #profileGrid, #likedGrid { column-count: 1; } }
-  .card {
-    break-inside: avoid; margin-bottom: 16px; background: var(--surface);
-    border-radius: var(--radius); overflow: hidden; position: relative;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
+  
+  .grid { max-width: 1400px; margin: 24px auto 60px; padding: 0 20px; column-count: 4; column-gap: 16px; }
+  @media (max-width: 1100px) { .grid { column-count: 3; } }
+  @media (max-width: 800px) { .grid { column-count: 2; } }
+  @media (max-width: 500px) { .grid { column-count: 1; } }
+  
+  .card { break-inside: avoid; margin-bottom: 16px; background: var(--surface); border-radius: var(--radius); overflow: hidden; position: relative; transition: transform 0.2s; }
   .card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
   .card img { width: 100%; display: block; cursor: zoom-in; }
-  .mine-badge {
-    position: absolute; top: 10px; left: 10px; background: rgba(230,0,35,0.9);
-    color: #fff; font-size: 0.65rem; font-weight: 700; padding: 3px 8px;
-    border-radius: 999px; letter-spacing: 0.5px; text-transform: uppercase; pointer-events: none;
-  }
+  
+  .badge { position: absolute; top: 10px; left: 10px; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; pointer-events: none; z-index: 2;}
+  .badge.mine { background: rgba(46, 125, 50, 0.9); }
+  .badge.friend { background: rgba(255, 152, 0, 0.9); }
+  
   .card-top-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 5; }
-  .icon-btn {
-    width: 36px; height: 36px; border-radius: 50%; border: none;
-    background: rgba(255,255,255,0.92); color: #222; font-size: 0.95rem;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, transform 0.1s; box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-  }
-  .icon-btn:hover { background: #fff; transform: scale(1.08); }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(255,255,255,0.92); color: #222; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.25); transition: 0.1s; font-size: 1rem; }
+  .icon-btn:hover { background: #fff; transform: scale(1.05); }
   .icon-btn.danger:hover { background: #ffcdd2; color: #c62828; }
   .icon-btn.liked { color: var(--accent); }
-  .card-bottom {
-    padding: 10px 12px; display: flex; justify-content: space-between;
-    align-items: center; gap: 8px; font-size: 0.78rem; color: var(--muted);
-    background: var(--surface);
-  }
+  
+  .card-bottom { padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--muted); background: var(--surface); gap: 8px; }
   .title-wrap { flex: 1; min-width: 0; display: flex; align-items: center; gap: 4px; }
   .title-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
-  .edit-title-btn {
-    background: transparent; border: none; color: var(--text); font-size: 0.8rem;
-    cursor: pointer; opacity: 0.6; flex-shrink: 0; padding: 2px 4px; border-radius: 4px;
-  }
+  .edit-title-btn { background: transparent; border: none; color: var(--text); font-size: 0.8rem; cursor: pointer; opacity: 0.6; flex-shrink: 0; padding: 2px 4px; border-radius: 4px; }
   .edit-title-btn:hover { opacity: 1; background: var(--surface-2); }
-  .empty-state { text-align: center; padding: 80px 20px; color: var(--muted); }
+  .date-text { font-size: 0.7rem; opacity: 0.7; white-space: nowrap; }
+  
+  .empty-state { text-align: center; padding: 80px 20px; color: var(--muted); column-span: all; }
   .empty-state .big { font-size: 3rem; margin-bottom: 12px; }
   
   /* --- Профиль --- */
-  .profile-header {
-    max-width: 1400px; margin: 32px auto 0; padding: 0 20px;
-    display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap;
-  }
+  .profile-header { max-width: 1400px; margin: 32px auto 0; padding: 0 20px; display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
   .avatar-wrap { position: relative; flex-shrink: 0; }
-  .avatar {
-    width: 96px; height: 96px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), #ff6b6b);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 2rem; font-weight: 800; color: #fff;
-    box-shadow: 0 8px 24px rgba(230,0,35,0.35); overflow: hidden;
-    background-size: cover; background-position: center;
-  }
-  .avatar-edit {
-    position: absolute; bottom: -2px; right: -2px; width: 32px; height: 32px;
-    border-radius: 50%; background: var(--surface-2); border: 2px solid var(--bg);
-    color: var(--text); font-size: 0.85rem; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-  }
+  .avatar { width: 96px; height: 96px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #ff6b6b); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: #fff; box-shadow: 0 8px 24px rgba(230,0,35,0.35); overflow: hidden; background-size: cover; background-position: center; }
+  .avatar-edit { position: absolute; bottom: -2px; right: -2px; width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); border: 2px solid var(--bg); color: var(--text); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .avatar-edit:hover { background: #383838; }
   .profile-info { flex: 1; min-width: 220px; }
   .profile-info h2 { margin: 0 0 4px; font-size: 1.5rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .profile-info .sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 12px; }
   .stats { display: flex; gap: 24px; flex-wrap: wrap; }
-  .stat {
-    display: flex; flex-direction: column;
-    background: transparent; border: none; color: inherit;
-    font-family: inherit; text-align: left; padding: 0; cursor: default;
-  }
-  .stat.clickable { cursor: pointer; }
-  .stat.clickable:hover .num { color: var(--accent-hover); }
-  .stat .num { font-size: 1.25rem; font-weight: 800; transition: color 0.15s; }
+  .stat { display: flex; flex-direction: column; }
+  .stat .num { font-size: 1.25rem; font-weight: 800; }
   .stat .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-  .profile-section-title { max-width: 1400px; margin: 40px auto 0; padding: 0 20px; font-size: 1.1rem; font-weight: 700; }
-  .profile-upload { max-width: 1400px; margin: 16px auto 0; padding: 0 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
   
-  /* --- Экран Помощи --- */
-  .help-container {
-    max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6;
-  }
+  .profile-upload { max-width: 1400px; margin: 16px auto 0; padding: 0 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .profile-section-title { max-width: 1400px; margin: 40px auto 0; padding: 0 20px; font-size: 1.1rem; font-weight: 700; }
+  
+  /* --- Помощь --- */
+  .help-container { max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
   .help-container h2 { font-size: 1.8rem; margin-bottom: 20px; }
   .help-container h3 { font-size: 1.2rem; margin-top: 30px; margin-bottom: 10px; color: var(--accent); }
-  .help-container p { margin-bottom: 15px; color: #d0d0d0; }
-  .help-container ul { margin-bottom: 15px; padding-left: 20px; color: #d0d0d0; }
-  .help-container li { margin-bottom: 8px; }
+  .help-container p, .help-container ul { margin-bottom: 15px; color: #d0d0d0; }
   .help-container code { background: var(--surface-2); padding: 2px 6px; border-radius: 4px; font-family: monospace; }
 
   /* --- Лайтбокс --- */
-  #lightbox {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none;
-    align-items: center; justify-content: center; z-index: 100; padding: 20px;
-  }
+  #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
   #lightbox.open { display: flex; }
-  #lightbox img { max-width: 95vw; max-height: 90vh; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
-  #lightbox .close {
-    position: absolute; top: 20px; right: 24px; background: rgba(255,255,255,0.1);
-    border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%;
-    font-size: 1.4rem; cursor: pointer;
-  }
+  #lightbox img { max-width: 90vw; max-height: 80vh; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); object-fit: contain; }
+  
+  .lightbox-controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
+  .lightbox-controls button { background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 12px 24px; border-radius: 999px; font-size: 1rem; font-weight: 600; cursor: pointer; backdrop-filter: blur(5px); transition: 0.2s; }
+  .lightbox-controls button:hover { background: rgba(255,255,255,0.3); }
+  
+  #lightbox .close { position: absolute; top: 20px; right: 24px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 1.4rem; cursor: pointer; }
   #lightbox .close:hover { background: rgba(255,255,255,0.25); }
   
   /* --- Модалки --- */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none;
-    align-items: center; justify-content: center; z-index: 150; padding: 20px;
-  }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 150; padding: 20px; }
   .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--surface); border-radius: 16px; padding: 24px;
-    width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-    max-height: 90vh; overflow-y: auto;
-  }
-  .modal h3 { margin: 0 0 16px; font-size: 1.1rem; }
-  .modal label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; margin-top: 14px; }
-  .modal input[type="text"], .modal textarea {
-    width: 100%; padding: 12px 14px; border-radius: 10px;
-    border: 1px solid #3a3a3a; background: var(--surface-2); color: var(--text);
-    font-size: 0.95rem; outline: none; font-family: inherit; resize: vertical;
-  }
+  .modal { background: var(--surface); border-radius: 16px; padding: 24px; width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); max-height: 90vh; overflow-y: auto; }
+  .modal h3 { margin: 0 0 16px; font-size: 1.1rem; text-align: center; }
+  .modal label { display: block; font-size: 0.8rem; color: var(--muted); margin: 14px 0 6px; }
+  .modal input[type="text"], .modal textarea { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #3a3a3a; background: var(--surface-2); color: var(--text); font-size: 0.95rem; outline: none; font-family: inherit; }
   .modal input[type="text"]:focus, .modal textarea:focus { border-color: var(--accent); }
-  .modal .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-  .modal button {
-    padding: 10px 18px; border-radius: 999px; border: none;
-    font-weight: 600; font-size: 0.9rem; cursor: pointer;
-  }
+  .modal .actions { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .modal button { padding: 10px 18px; border-radius: 999px; border: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
   .modal .cancel { background: var(--surface-2); color: var(--text); }
   .modal .cancel:hover { background: #383838; }
   .modal .confirm { background: var(--accent); color: #fff; }
   .modal .confirm:hover { background: var(--accent-hover); }
+  
   .modal-avatar-row { display: flex; align-items: center; gap: 14px; margin-top: 6px; flex-wrap: wrap; }
-  .modal-avatar-preview {
-    width: 56px; height: 56px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), #ff6b6b);
-    background-size: cover; background-position: center; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; color: #fff; overflow: hidden;
-  }
-  .data-modal p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; margin: 0 0 16px; }
-  .data-modal .data-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
-  .data-modal .data-buttons button {
-    width: 100%; padding: 12px 18px; border-radius: 10px;
-    border: 1px solid #3a3a3a; background: var(--surface-2); color: var(--text);
-    font-weight: 600; font-size: 0.9rem; cursor: pointer; text-align: left;
-    pointer-events: auto;
-  }
-  .data-modal .data-buttons button:hover { background: #383838; }
-  .data-modal .data-buttons button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .data-modal .data-buttons button.primary:hover { background: var(--accent-hover); }
-  .data-modal .storage-info {
-    margin-top: 16px; padding-top: 16px; border-top: 1px solid #333;
-    font-size: 0.8rem; color: var(--muted); line-height: 1.6;
-  }
-  .autosave-status { font-size: 0.8rem; color: var(--muted); margin-top: 12px; line-height: 1.5; }
-  .autosave-status .ok { color: #66bb6a; font-weight: 700; }
-  .autosave-status .warn { color: #ffb74d; font-weight: 700; }
+  .modal-avatar-preview { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #ff6b6b); background-size: cover; background-position: center; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; }
+  
+  .share-banner { max-width: 1400px; margin: 20px auto 0; padding: 15px 20px; background: rgba(255, 152, 0, 0.1); border: 1px solid rgba(255, 152, 0, 0.3); border-radius: 12px; color: #ffb74d; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .share-banner .btn { padding: 6px 12px; font-size: 0.8rem; }
 
-  .followers-modal .modal { max-width: 440px; text-align: center; }
-  .followers-modal .followers-icon { font-size: 3rem; margin-bottom: 12px; }
-  .followers-modal h3 { font-size: 1.2rem; margin: 0 0 10px; }
-  .followers-modal p { font-size: 0.9rem; color: var(--muted); line-height: 1.5; margin: 0 0 6px; }
-  .followers-modal .followers-hint { font-size: 0.8rem; color: var(--muted); opacity: 0.8; margin-bottom: 22px; }
-  .followers-modal .followers-actions { display: flex; justify-content: center; }
-  .followers-modal .followers-actions button {
-    padding: 12px 24px; border-radius: 10px; border: none;
-    background: var(--surface-2); color: var(--text);
-    font-weight: 700; font-size: 0.95rem; cursor: pointer;
-  }
-  .followers-modal .followers-actions button:hover { background: #383838; }
-
-  .confirm-modal .modal { max-width: 420px; text-align: center; }
-  .confirm-modal .confirm-icon { font-size: 3rem; margin-bottom: 12px; }
-  .confirm-modal h3 { font-size: 1.2rem; margin: 0 0 10px; }
-  .confirm-modal p { font-size: 0.9rem; color: var(--muted); line-height: 1.5; margin: 0 0 22px; }
-  .confirm-modal .confirm-actions { display: flex; gap: 10px; justify-content: center; }
-  .confirm-modal .confirm-actions button {
-    flex: 1; padding: 12px 18px; border-radius: 10px; border: none;
-    font-weight: 700; font-size: 0.95rem; cursor: pointer;
-  }
-  .confirm-modal .btn-no { background: var(--surface-2); color: var(--text); }
-  .confirm-modal .btn-no:hover { background: #383838; }
-  .confirm-modal .btn-yes { background: var(--accent); color: #fff; }
-  .confirm-modal .btn-yes:hover { background: var(--accent-hover); }
-
-  #toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: var(--surface-2); color: var(--text); padding: 12px 20px;
-    border-radius: 999px; font-size: 0.85rem; box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-    opacity: 0; transition: transform 0.3s, opacity 0.3s; z-index: 200;
-    pointer-events: none; max-width: 90vw; text-align: center;
-  }
+  #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface-2); color: var(--text); padding: 12px 20px; border-radius: 999px; font-size: 0.85rem; box-shadow: 0 8px 30px rgba(0,0,0,0.5); opacity: 0; transition: 0.3s; z-index: 200; pointer-events: none; text-align: center; max-width: 90vw; }
   #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-  #saveIndicator {
-    position: fixed; top: 70px; right: 20px; background: rgba(46,125,50,0.95);
-    color: #fff; padding: 6px 14px; border-radius: 999px;
-    font-size: 0.75rem; font-weight: 600; opacity: 0; transform: translateY(-10px);
-    transition: opacity 0.3s, transform 0.3s; z-index: 210; pointer-events: none;
-  }
-  #saveIndicator.show { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
@@ -276,111 +136,103 @@
 <header>
   <div class="logo"><span class="dot"></span>Pinboard</div>
   <div class="nav-tabs">
-    <button type="button" class="nav-tab active" data-screen="feed">Лента</button>
-    <button type="button" class="nav-tab" data-screen="profile">Моя страница</button>
-    <button type="button" class="nav-tab" data-screen="liked">Понравившиеся</button>
-    <button type="button" class="nav-tab" data-screen="help">Помощь</button>
+    <button type="button" class="nav-tab active" data-screen="feed" onclick="switchScreen('feed')">Лента</button>
+    <button type="button" class="nav-tab" data-screen="profile" onclick="switchScreen('profile')">Моя страница</button>
+    <button type="button" class="nav-tab" data-screen="liked" onclick="switchScreen('liked')">Понравившиеся</button>
+    <button type="button" class="nav-tab" data-screen="help" onclick="switchScreen('help')">Помощь</button>
   </div>
   <div class="search-wrap">
     <span class="icon">🔍</span>
     <input type="text" id="searchInput" placeholder="Поиск по названию...">
   </div>
-  <button type="button" class="upload-btn" id="uploadBtn">+ Загрузить</button>
-  <button type="button" class="upload-btn secondary" id="dataBtn" title="Сохранение и резервные копии">💾 Данные</button>
-  <input type="file" id="fileInput" accept="image/*" multiple hidden>
-  <input type="file" id="avatarInput" accept="image/*" hidden>
-  <input type="file" id="importInput" accept="application/json,.json" hidden>
+  <button type="button" class="btn" onclick="document.getElementById('fileInput').click()">+ Загрузить</button>
+  <button type="button" class="btn secondary" onclick="openClearModal()">🗑️ Очистить</button>
+  
+  <input type="file" id="fileInput" accept="image/*" multiple hidden onchange="handleFileUpload(this)">
+  <input type="file" id="avatarInput" accept="image/*" hidden onchange="handleAvatarUpload(this)">
+  <input type="file" id="importFileInput" accept=".json" hidden onchange="importFriendFile(this)">
 </header>
 
 <div class="screen active" id="screen-feed">
+  <div class="share-banner" id="friendBanner" style="display: none;">
+    <span id="friendBannerText">👀 Вы просматриваете картинки друга</span>
+    <button type="button" class="btn secondary" onclick="backToMyFeed()">Вернуться к своим</button>
+  </div>
+
+  <div style="max-width: 1400px; margin: 20px auto 0; padding: 0 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+     <button type="button" class="btn blue" onclick="document.getElementById('importFileInput').click()">📥 Загрузить от друга</button>
+     <button type="button" class="btn secondary" onclick="downloadFriendFile()">📤 Поделиться с другом</button>
+  </div>
+
   <div id="dropZone">
-    <div class="drop-inner" id="dropInner">
+    <div class="drop-inner" id="dropInner" onclick="document.getElementById('fileInput').click()">
       Перетащите картинки сюда или <strong>нажмите, чтобы выбрать</strong>
     </div>
   </div>
-  <div id="feedGrid"></div>
+  <div id="feedGrid" class="grid"></div>
 </div>
 
 <div class="screen" id="screen-profile">
   <div class="profile-header">
     <div class="avatar-wrap">
       <div class="avatar" id="avatar">Я</div>
-      <button type="button" class="avatar-edit" id="avatarEditBtn" title="Сменить аватар">📷</button>
+      <button type="button" class="avatar-edit" onclick="openProfileModal()" title="Сменить аватар">📷</button>
     </div>
     <div class="profile-info">
       <h2>
         <span id="profileName">Мой профиль</span>
-        <button type="button" class="upload-btn secondary" id="editProfileBtn" style="font-size:0.8rem;padding:8px 14px;">Редактировать профиль</button>
+        <button type="button" class="btn secondary" onclick="openProfileModal()" style="font-size:0.8rem; padding:8px 14px;">Редактировать</button>
       </h2>
       <div class="sub" id="profileBio">Здесь ваши картинки</div>
       <div class="stats">
         <div class="stat"><span class="num" id="statCount">0</span><span class="label">Картинок</span></div>
         <div class="stat"><span class="num" id="statLikes">0</span><span class="label">Лайков</span></div>
-        <button type="button" class="stat clickable" id="statFollowersBtn" title="Показать друзей">
-          <span class="num" id="statFollowers">0</span>
-          <span class="label">Друзья</span>
-        </button>
       </div>
     </div>
   </div>
   <div class="profile-upload">
-    <button type="button" class="upload-btn" id="uploadBtnProfile">+ Загрузить на страницу</button>
-    <button type="button" class="upload-btn secondary" id="exportBtnProfile">💾 Скачать копию</button>
-    <button type="button" class="upload-btn secondary" id="helpBtnProfile" style="margin-left: auto;">❓ Помощь</button>
+    <button type="button" class="btn" onclick="document.getElementById('fileInput').click()">+ Загрузить на страницу</button>
+    <button type="button" class="btn blue" onclick="downloadFriendFile()">📤 Поделиться</button>
+    <button type="button" class="btn secondary" onclick="switchScreen('help')" style="margin-left: auto;">❓ Помощь</button>
   </div>
   <div class="profile-section-title">Мои картинки</div>
-  <div id="profileGrid"></div>
+  <div id="profileGrid" class="grid"></div>
 </div>
 
 <div class="screen" id="screen-liked">
   <div class="profile-section-title" style="margin-top:32px;">Понравившиеся</div>
-  <div id="likedGrid"></div>
+  <div id="likedGrid" class="grid"></div>
 </div>
 
-<!-- ЭКРАН ПОМОЩИ -->
 <div class="screen" id="screen-help">
   <div class="help-container">
     <h2>Как пользоваться Pinboard</h2>
-    
     <h3>1. Как добавить картинки?</h3>
-    <p>Вы можете перетащить изображения прямо в окно (на вкладке «Лента») или нажать кнопку «+ Загрузить». После этого появится окно, где можно дать картинке название. Поддерживаются форматы JPG, PNG, GIF и WEBP.</p>
-    
-    <h3>2. Где хранятся мои данные?</h3>
-    <p><b>Важно:</b> этот сайт работает полностью в вашем браузере и не имеет сервера. Это значит, что все картинки, лайки и настройки профиля сохраняются <b>только на том устройстве</b>, на котором вы их загрузили (в памяти браузера).</p>
-    <p>Если вы загрузите картинку с телефона, на компьютере вы её не увидите. И наоборот. Это не ошибка, а ограничение статического сайта.</p>
-    
-    <h3>3. Как перенести картинки на другое устройство?</h3>
-    <p>Так как автоматической синхронизации нет, вы можете использовать резервные копии:</p>
-    <ul>
-      <li>Нажмите кнопку <b>«💾 Данные»</b> вверху сайта.</li>
-      <li>Нажмите <b>«Скачать копию сейчас (JSON)»</b>. У вас скачается файл.</li>
-      <li>Перешлите этот файл на другое устройство (например, через мессенджер).</li>
-      <li>Откройте сайт на другом устройстве, нажмите <b>«💾 Данные» → «Восстановить из файла»</b> и выберите этот файл.</li>
-    </ul>
-
-    <h3>4. Что такое автосохранение в файл?</h3>
-    <p>В браузерах Chrome и Edge (на компьютере) вы можете включить автосохранение в файл. Сайт будет автоматически перезаписывать файл <code>pinboard-autosave.json</code> на вашем диске при каждом изменении. Это защитит вашу коллекцию, если вы случайно очистите кэш браузера.</p>
-    
-    <h3>5. Как удалить все данные?</h3>
-    <p>Нажмите <b>«💾 Данные» → «🗑️ Удалить все данные»</b>. Сайт спросит подтверждение, и только после нажатия «Да» все картинки, лайки и профиль будут стерты. Это действие необратимо.</p>
-
-    <h3>6. Почему нет друзей?</h3>
-    <p>В этой версии сайта нет сервера и аккаунтов, поэтому другие люди не могут зарегистрироваться или добавить вас в друзья. Цифра «0» в профиле — это заглушка на будущее. Когда сайт переедет на полноценный сервер, друзья и подписки станут реальными.</p>
+    <p>Нажмите «+ Загрузить» или перетащите файлы в ленту. Они сохранятся в браузере.</p>
+    <h3>2. Как поделиться с другом?</h3>
+    <p>Нажмите кнопку <b>«📤 Поделиться с другом»</b>. У вас скачается файл <code>.json</code>. Отправьте этот файл другу в мессенджере.</p>
+    <h3>3. Как загрузить картинки друга?</h3>
+    <p>Нажмите <b>«📥 Загрузить от друга»</b> и выберите файл, который прислал друг.</p>
+    <h3>4. Как сохранить картинку?</h3>
+    <p>Нажмите на картинку, чтобы открыть её на весь экран. Внизу будет кнопка <b>«Скачать»</b>. Или нажмите на иконку <b>📥</b> прямо на карточке.</p>
   </div>
 </div>
 
 <div id="lightbox">
-  <button type="button" class="close" id="lightboxClose">✕</button>
+  <button type="button" class="close" onclick="document.getElementById('lightbox').classList.remove('open')">✕</button>
   <img id="lightboxImg" src="" alt="">
+  <div class="lightbox-controls">
+    <button type="button" onclick="downloadCurrentImage()">💾 Скачать картинку</button>
+  </div>
 </div>
 
 <div class="modal-overlay" id="titleModal">
   <div class="modal">
-    <h3 id="titleModalHeader">Название картинки</h3>
+    <h3>Название картинки</h3>
     <input type="text" id="titleModalInput" placeholder="Введите название...">
     <div class="actions">
-      <button type="button" class="cancel" id="titleModalCancel">Отмена</button>
-      <button type="button" class="confirm" id="titleModalConfirm">Сохранить</button>
+      <button type="button" class="cancel" onclick="document.getElementById('titleModal').classList.remove('open')">Отмена</button>
+      <button type="button" class="confirm" onclick="saveTitle()">Сохранить</button>
     </div>
   </div>
 </div>
@@ -395,849 +247,384 @@
     <label>Аватар</label>
     <div class="modal-avatar-row">
       <div class="modal-avatar-preview" id="modalAvatarPreview">Я</div>
-      <button type="button" class="upload-btn secondary" id="modalAvatarBtn" style="font-size:0.85rem;">Загрузить аватар</button>
-      <button type="button" class="upload-btn secondary" id="modalAvatarRemove" style="font-size:0.85rem;">Убрать</button>
+      <button type="button" class="btn secondary" onclick="document.getElementById('avatarInput').click()">Загрузить</button>
+      <button type="button" class="btn secondary" onclick="removeAvatar()">Убрать</button>
     </div>
     <div class="actions">
-      <button type="button" class="cancel" id="profileModalCancel">Отмена</button>
-      <button type="button" class="confirm" id="profileModalConfirm">Сохранить</button>
+      <button type="button" class="cancel" onclick="document.getElementById('profileModal').classList.remove('open')">Отмена</button>
+      <button type="button" class="confirm" onclick="saveProfile()">Сохранить</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="dataModal">
-  <div class="modal data-modal">
-    <h3>Сохранение и данные</h3>
-    <p>Всё сохраняется автоматически и подгружается при следующем открытии сайта: IndexedDB → localStorage → файл автосохранения (если он был выбран). Чтобы копия была и на диске, включите автосохранение в файл.</p>
-
-    <div class="data-buttons">
-      <button type="button" class="primary" id="enableAutosaveBtn">📁 Включить автосохранение в файл</button>
-      <button type="button" id="exportBtn">💾 Скачать копию сейчас (JSON)</button>
-      <button type="button" id="importBtn">📥 Восстановить из файла</button>
-      <button type="button" id="clearAllBtn" style="color:#ff6b6b;">🗑️ Удалить все данные</button>
-    </div>
-
-    <div class="autosave-status" id="autosaveStatus"></div>
-    <div class="storage-info" id="storageInfo">Проверка хранилища...</div>
-
+<!-- Модалка подтверждения очистки -->
+<div class="modal-overlay" id="confirmClearModal">
+  <div class="modal" style="text-align: center;">
+    <h3 style="color: #ff6b6b; font-size: 1.3rem;">Очистить всё?</h3>
+    <p style="color: var(--muted); margin-bottom: 20px;">Это навсегда удалит ВСЕ ваши картинки и профиль. Отменить будет нельзя.</p>
     <div class="actions">
-      <button type="button" class="cancel" id="dataModalClose">Закрыть</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay followers-modal" id="followersModal">
-  <div class="modal">
-    <div class="followers-icon">👥</div>
-    <h3>Друзья</h3>
-    <p id="followersCountText">Пока друзей нет.</p>
-    <p class="followers-hint">Друзья появятся, когда сайт будет на сервере и другие пользователи смогут добавлять вас в друзья. В локальной версии все данные хранятся только в вашем браузере.</p>
-    <div class="followers-actions">
-      <button type="button" id="followersModalClose">Понятно</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay confirm-modal" id="confirmClearModal">
-  <div class="modal">
-    <div class="confirm-icon">⚠️</div>
-    <h3>Вы уверены?</h3>
-    <p>Это удалит <b>все картинки, лайки и профиль</b> без возможности восстановления. Отменить это действие будет нельзя.</p>
-    <div class="confirm-actions">
-      <button type="button" class="btn-no" id="confirmClearNo">Нет, отмена</button>
-      <button type="button" class="btn-yes" id="confirmClearYes">Да, удалить</button>
+      <button type="button" class="cancel" onclick="document.getElementById('confirmClearModal').classList.remove('open')" style="flex: 1;">Нет, отмена</button>
+      <button type="button" class="confirm" onclick="confirmClear()" style="flex: 1; background: #d32f2f;">Да, удалить</button>
     </div>
   </div>
 </div>
 
 <div id="toast"></div>
-<div id="saveIndicator">Сохранено</div>
 
 <script>
-/* =========================================================
-   Ключи и БД
-   ========================================================= */
-const DB_NAME = 'pinboard_db';
-const DB_VERSION = 1;
-const STORE_NAME = 'kv';
-const LS_IMAGES_KEY  = 'pinboard_images_v7';
-const LS_PROFILE_KEY = 'pinboard_profile_v3';
-const AUTOSAVE_FILENAME = 'pinboard-autosave.json';
+  let images = [];
+  let profile = { name: 'Мой профиль', bio: 'Здесь ваши картинки', avatar: '' };
+  let friendImages = [];
+  let isViewingFriend = false;
+  let editIndex = -1;
+  let pendingAvatarUrl = null;
+  let currentLightboxUrl = '';
 
-let db = null;
-let autosaveHandle = null;
-let autosaveEnabled = false;
-let autosaveWriting = false;
-let autosavePending = false;
-
-/* =========================================================
-   IndexedDB
-   ========================================================= */
-function openDB() {
-  return new Promise((resolve) => {
-    if (!('indexedDB' in window)) { resolve(null); return; }
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = (e) => {
-      const d = e.target.result;
-      if (!d.objectStoreNames.contains(STORE_NAME)) d.createObjectStore(STORE_NAME);
-    };
-    req.onsuccess = (e) => { db = e.target.result; resolve(db); };
-    req.onerror = () => resolve(null);
-  });
-}
-function idbGet(key) {
-  return new Promise((resolve) => {
-    if (!db) { resolve(null); return; }
-    try {
-      const tx = db.transaction(STORE_NAME, 'readonly');
-      const req = tx.objectStore(STORE_NAME).get(key);
-      req.onsuccess = () => resolve(req.result ?? null);
-      req.onerror = () => resolve(null);
-    } catch (e) { resolve(null); }
-  });
-}
-function idbSet(key, value) {
-  return new Promise((resolve) => {
-    if (!db) { resolve(false); return; }
-    try {
-      const tx = db.transaction(STORE_NAME, 'readwrite');
-      const req = tx.objectStore(STORE_NAME).put(value, key);
-      req.onsuccess = () => resolve(true);
-      req.onerror = () => resolve(false);
-    } catch (e) { resolve(false); }
-  });
-}
-
-/* =========================================================
-   Тост / индикатор
-   ========================================================= */
-const toastEl = document.getElementById('toast');
-let toastTimer;
-function showToast(msg) {
-  toastEl.textContent = msg;
-  toastEl.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2500);
-}
-const saveIndicator = document.getElementById('saveIndicator');
-let saveTimer;
-function showSaveIndicator() {
-  saveIndicator.classList.add('show');
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => saveIndicator.classList.remove('show'), 1200);
-}
-
-/* =========================================================
-   Состояние
-   ========================================================= */
-let images = [];
-let profile = { name: 'Мой профиль', bio: 'Здесь ваши картинки', avatar: '', followers: 0 };
-let searchQuery = '';
-let currentScreen = 'feed';
-let onTitleConfirm = null;
-let pendingAvatarDataUrl = null;
-
-/* =========================================================
-   Сохранение
-   ========================================================= */
-async function persistAll() {
-  await idbSet('images', images);
-  await idbSet('profile', profile);
   try {
-    localStorage.setItem(LS_IMAGES_KEY, JSON.stringify(images));
-    localStorage.setItem(LS_PROFILE_KEY, JSON.stringify(profile));
-  } catch (e) {}
-  if (autosaveEnabled && autosaveHandle) queueAutosaveToFile();
-  showSaveIndicator();
-}
-function queueAutosaveToFile() {
-  if (autosaveWriting) { autosavePending = true; return; }
-  autosaveWriting = true;
-  writeAutosaveFile().finally(() => {
-    autosaveWriting = false;
-    if (autosavePending) { autosavePending = false; queueAutosaveToFile(); }
-  });
-}
-async function writeAutosaveFile() {
-  if (!autosaveHandle) return;
-  try {
-    let perm = await autosaveHandle.queryPermission({ mode: 'readwrite' });
-    if (perm !== 'granted') perm = await autosaveHandle.requestPermission({ mode: 'readwrite' });
-    if (perm !== 'granted') {
-      autosaveEnabled = false;
-      updateAutosaveStatus();
-      showToast('Доступ к файлу потерян. Включите автосохранение заново.');
-      return;
+    const savedImgs = localStorage.getItem('pinboard_imgs');
+    if (savedImgs) images = JSON.parse(savedImgs);
+    const savedProf = localStorage.getItem('pinboard_prof');
+    if (savedProf) profile = JSON.parse(savedProf);
+  } catch(e) { console.error('Ошибка загрузки', e); }
+
+  function saveData() {
+    try {
+      localStorage.setItem('pinboard_imgs', JSON.stringify(images));
+      localStorage.setItem('pinboard_prof', JSON.stringify(profile));
+    } catch (e) { showToast('Память переполнена'); }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function switchScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    const tab = document.querySelector(`.nav-tab[data-screen="${name}"]`);
+    if (tab) tab.classList.add('active');
+    render();
+  }
+
+  function render() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const matches = img => !q || (img.name || '').toLowerCase().includes(q);
+
+    let feedData = [];
+    if (isViewingFriend) {
+      feedData = friendImages.filter(matches);
+    } else {
+      feedData = [...images.map(i => ({...i, isFriend: false})), ...friendImages.map(i => ({...i, isFriend: true}))]
+                 .filter(matches)
+                 .sort((a, b) => b.time - a.time);
     }
-    const writable = await autosaveHandle.createWritable();
-    await writable.write(JSON.stringify(buildBackupPayload(), null, 2));
-    await writable.close();
-  } catch (e) {
-    autosaveEnabled = false;
-    autosaveHandle = null;
-    updateAutosaveStatus();
-    showToast('Не удалось записать файл. Включите автосохранение заново.');
-  }
-}
-function buildBackupPayload() {
-  return { version: 4, exportedAt: new Date().toISOString(), images: images, profile: profile };
-}
 
-/* =========================================================
-   Восстановление при запуске
-   ========================================================= */
-async function restoreAll() {
-  let restoredImages = await idbGet('images');
-  let restoredProfile = await idbGet('profile');
+    const feedGrid = document.getElementById('feedGrid');
+    feedGrid.innerHTML = '';
+    if (feedData.length === 0) {
+      feedGrid.innerHTML = '<div class="empty-state"><div class="big">🖼️</div><div>Пусто</div></div>';
+    } else {
+      feedData.forEach(img => feedGrid.appendChild(createCard(img, img.isFriend ? 'friend' : 'mine')));
+    }
 
-  if (!Array.isArray(restoredImages) || restoredImages.length === 0) {
-    try {
-      const raw = JSON.parse(localStorage.getItem(LS_IMAGES_KEY));
-      if (Array.isArray(raw) && raw.length > 0) restoredImages = raw;
-    } catch (e) {}
-  }
-  if (!restoredProfile || typeof restoredProfile !== 'object') {
-    try {
-      const raw = JSON.parse(localStorage.getItem(LS_PROFILE_KEY));
-      if (raw && typeof raw === 'object') restoredProfile = raw;
-    } catch (e) {}
+    const myImages = images.filter(matches).sort((a, b) => b.time - a.time);
+    const profileGrid = document.getElementById('profileGrid');
+    profileGrid.innerHTML = '';
+    if (myImages.length === 0) {
+      profileGrid.innerHTML = '<div class="empty-state"><div class="big">📭</div><div>Нет картинок</div></div>';
+    } else {
+      myImages.forEach(img => profileGrid.appendChild(createCard(img, 'mine')));
+    }
+
+    const likedData = feedData.filter(i => i.liked);
+    const likedGrid = document.getElementById('likedGrid');
+    likedGrid.innerHTML = '';
+    if (likedData.length === 0) {
+      likedGrid.innerHTML = '<div class="empty-state"><div class="big">🤍</div><div>Нет лайков</div></div>';
+    } else {
+      likedData.forEach(img => likedGrid.appendChild(createCard(img, img.isFriend ? 'friend' : 'mine')));
+    }
+
+    document.getElementById('profileName').textContent = profile.name;
+    document.getElementById('profileBio').textContent = profile.bio;
+    document.getElementById('statCount').textContent = images.length;
+    document.getElementById('statLikes').textContent = images.filter(i => i.liked).length;
+    
+    const av = document.getElementById('avatar');
+    if (profile.avatar) { av.style.backgroundImage = `url(${profile.avatar})`; av.textContent = ''; }
+    else { av.style.backgroundImage = ''; av.textContent = (profile.name || 'Я')[0].toUpperCase(); }
+
+    document.getElementById('friendBanner').style.display = isViewingFriend ? 'flex' : 'none';
   }
 
-  const savedHandle = await idbGet('autosaveHandle');
-  if (savedHandle && savedHandle.name === AUTOSAVE_FILENAME) {
-    autosaveHandle = savedHandle;
-    try {
-      const perm = await autosaveHandle.queryPermission({ mode: 'readonly' });
-      if (perm === 'granted') {
-        const file = await autosaveHandle.getFile();
-        const text = await file.text();
-        if (text) {
-          const data = JSON.parse(text);
-          if (Array.isArray(data.images) && (!Array.isArray(restoredImages) || restoredImages.length === 0)) {
-            restoredImages = data.images;
-          }
-          if (data.profile && typeof data.profile === 'object' && (!restoredProfile || Object.keys(restoredProfile).length === 0)) {
-            restoredProfile = data.profile;
-          }
-        }
-        autosaveEnabled = true;
+  function createCard(img, type) {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const image = document.createElement('img');
+    image.src = img.dataUrl;
+    image.loading = 'lazy';
+    image.onclick = () => {
+      currentLightboxUrl = img.dataUrl;
+      document.getElementById('lightboxImg').src = img.dataUrl;
+      document.getElementById('lightbox').classList.add('open');
+    };
+
+    const badge = document.createElement('span');
+    badge.className = `badge ${type}`;
+    badge.textContent = type === 'mine' ? 'Моё' : 'Друг';
+
+    const top = document.createElement('div');
+    top.className = 'card-top-actions';
+
+    const likeBtn = document.createElement('button');
+    likeBtn.className = 'icon-btn' + (img.liked ? ' liked' : '');
+    likeBtn.innerHTML = img.liked ? '❤️' : '🤍';
+    likeBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (type === 'mine') {
+        const realImg = images.find(i => i.time === img.time);
+        if (realImg) realImg.liked = !realImg.liked;
+        saveData();
       } else {
-        autosaveEnabled = false;
+        const realImg = friendImages.find(i => i.time === img.time);
+        if (realImg) realImg.liked = !realImg.liked;
       }
-    } catch (e) {
-      autosaveEnabled = false;
+      render();
+    };
+    top.appendChild(likeBtn);
+
+    const dlBtn = document.createElement('button');
+    dlBtn.className = 'icon-btn';
+    dlBtn.innerHTML = '📥';
+    dlBtn.title = 'Скачать картинку';
+    dlBtn.onclick = (e) => {
+      e.stopPropagation();
+      downloadImage(img.dataUrl, img.name);
+    };
+    top.appendChild(dlBtn);
+
+    if (type === 'mine') {
+      const delBtn = document.createElement('button');
+      delBtn.className = 'icon-btn danger';
+      delBtn.innerHTML = '🗑️';
+      delBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (confirm('Удалить картинку?')) {
+          images = images.filter(i => i.time !== img.time);
+          saveData(); render();
+        }
+      };
+      top.appendChild(delBtn);
+    }
+
+    const bottom = document.createElement('div');
+    bottom.className = 'card-bottom';
+
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'title-wrap';
+    const title = document.createElement('span');
+    title.className = 'title-text';
+    title.textContent = img.name || 'Без названия';
+    titleWrap.appendChild(title);
+
+    if (type === 'mine') {
+      const editBtn = document.createElement('button');
+      editBtn.className = 'edit-title-btn';
+      editBtn.innerHTML = '✏️';
+      editBtn.onclick = (e) => {
+        e.stopPropagation();
+        editIndex = images.findIndex(i => i.time === img.time);
+        document.getElementById('titleModalInput').value = img.name;
+        document.getElementById('titleModal').classList.add('open');
+      };
+      titleWrap.appendChild(editBtn);
+    }
+
+    const date = document.createElement('span');
+    date.className = 'date-text';
+    date.textContent = new Date(img.time).toLocaleDateString('ru-RU');
+
+    bottom.appendChild(titleWrap);
+    bottom.appendChild(date);
+
+    card.appendChild(image);
+    card.appendChild(badge);
+    card.appendChild(top);
+    card.appendChild(bottom);
+    return card;
+  }
+
+  function downloadImage(dataUrl, name) {
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = (name || 'image') + '.jpg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast('Картинка скачана');
+  }
+
+  function downloadCurrentImage() {
+    if (currentLightboxUrl) {
+      downloadImage(currentLightboxUrl, 'pinboard_image');
     }
   }
 
-  images = Array.isArray(restoredImages) ? restoredImages : [];
-  profile = restoredProfile || { name: 'Мой профиль', bio: 'Здесь ваши картинки', avatar: '', followers: 0 };
-  if (typeof profile.followers !== 'number') profile.followers = 0;
-}
+  function handleFileUpload(inp) {
+    const files = Array.from(inp.files).filter(f => f.type.startsWith('image/'));
+    if (!files.length) return;
 
-/* =========================================================
-   DOM
-   ========================================================= */
-const fileInput   = document.getElementById('fileInput');
-const avatarInput = document.getElementById('avatarInput');
-const importInput = document.getElementById('importInput');
-const uploadBtn   = document.getElementById('uploadBtn');
-const uploadBtnProfile = document.getElementById('uploadBtnProfile');
-const dropInner   = document.getElementById('dropInner');
-const feedGrid    = document.getElementById('feedGrid');
-const profileGrid = document.getElementById('profileGrid');
-const likedGrid   = document.getElementById('likedGrid');
-const searchInput = document.getElementById('searchInput');
-const lightbox    = document.getElementById('lightbox');
-const lightboxImg = document.getElementById('lightboxImg');
-const lightboxClose = document.getElementById('lightboxClose');
-
-const titleModal       = document.getElementById('titleModal');
-const titleModalHeader = document.getElementById('titleModalHeader');
-const titleModalInput  = document.getElementById('titleModalInput');
-const titleModalCancel = document.getElementById('titleModalCancel');
-const titleModalConfirm= document.getElementById('titleModalConfirm');
-
-const profileModal        = document.getElementById('profileModal');
-const profileNameInput    = document.getElementById('profileNameInput');
-const profileBioInput     = document.getElementById('profileBioInput');
-const profileModalCancel  = document.getElementById('profileModalCancel');
-const profileModalConfirm = document.getElementById('profileModalConfirm');
-const modalAvatarPreview  = document.getElementById('modalAvatarPreview');
-const modalAvatarBtn      = document.getElementById('modalAvatarBtn');
-const modalAvatarRemove   = document.getElementById('modalAvatarRemove');
-
-const profileNameEl = document.getElementById('profileName');
-const profileBioEl  = document.getElementById('profileBio');
-const avatarEl      = document.getElementById('avatar');
-const avatarEditBtn = document.getElementById('avatarEditBtn');
-const editProfileBtn= document.getElementById('editProfileBtn');
-
-const statCount = document.getElementById('statCount');
-const statLikes = document.getElementById('statLikes');
-const statFollowers = document.getElementById('statFollowers');
-const statFollowersBtn = document.getElementById('statFollowersBtn');
-
-const dataBtn        = document.getElementById('dataBtn');
-const dataModal      = document.getElementById('dataModal');
-const dataModalClose = document.getElementById('dataModalClose');
-const exportBtn      = document.getElementById('exportBtn');
-const exportBtnProfile = document.getElementById('exportBtnProfile');
-const importBtn      = document.getElementById('importBtn');
-const clearAllBtn    = document.getElementById('clearAllBtn');
-const storageInfo    = document.getElementById('storageInfo');
-const enableAutosaveBtn = document.getElementById('enableAutosaveBtn');
-const autosaveStatusEl = document.getElementById('autosaveStatus');
-const helpBtnProfile = document.getElementById('helpBtnProfile');
-
-const followersModal      = document.getElementById('followersModal');
-const followersModalClose = document.getElementById('followersModalClose');
-const followersCountText  = document.getElementById('followersCountText');
-
-const confirmClearModal = document.getElementById('confirmClearModal');
-const confirmClearNo    = document.getElementById('confirmClearNo');
-const confirmClearYes   = document.getElementById('confirmClearYes');
-
-/* =========================================================
-   Вкладки
-   ========================================================= */
-document.querySelectorAll('.nav-tab').forEach(tab => {
-  tab.addEventListener('click', () => switchScreen(tab.dataset.screen));
-});
-function switchScreen(name) {
-  currentScreen = name;
-  document.querySelectorAll('.nav-tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.screen === name);
-  });
-  document.querySelectorAll('.screen').forEach(s => {
-    s.classList.toggle('active', s.id === 'screen-' + name);
-  });
-  // Очищаем поиск при переходе на страницу помощи
-  if (name === 'help') {
-    searchInput.value = '';
-    searchQuery = '';
-  } else {
-    render();
-  }
-}
-
-/* =========================================================
-   Модалка названия
-   ========================================================= */
-function openTitleModal(headerText, initialValue, callback) {
-  titleModalHeader.textContent = headerText;
-  titleModalInput.value = initialValue || '';
-  onTitleConfirm = callback;
-  titleModal.classList.add('open');
-  setTimeout(() => titleModalInput.focus(), 50);
-}
-function closeTitleModal() {
-  titleModal.classList.remove('open');
-  onTitleConfirm = null;
-}
-titleModalCancel.addEventListener('click', closeTitleModal);
-titleModalConfirm.addEventListener('click', () => {
-  const value = titleModalInput.value.trim();
-  if (onTitleConfirm) onTitleConfirm(value);
-  closeTitleModal();
-});
-titleModalInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') titleModalConfirm.click();
-  if (e.key === 'Escape') closeTitleModal();
-});
-titleModal.addEventListener('mousedown', (e) => { if (e.target === titleModal) closeTitleModal(); });
-
-/* =========================================================
-   Модалка профиля
-   ========================================================= */
-function openProfileModal() {
-  profileNameInput.value = profile.name || '';
-  profileBioInput.value = profile.bio || '';
-  pendingAvatarDataUrl = null;
-  renderAvatarPreview(profile.avatar);
-  profileModal.classList.add('open');
-  setTimeout(() => profileNameInput.focus(), 50);
-}
-function closeProfileModal() {
-  profileModal.classList.remove('open');
-  pendingAvatarDataUrl = null;
-}
-function renderAvatarPreview(src) {
-  if (src) {
-    modalAvatarPreview.style.backgroundImage = 'url(' + src + ')';
-    modalAvatarPreview.textContent = '';
-  } else {
-    modalAvatarPreview.style.backgroundImage = '';
-    modalAvatarPreview.textContent = (profileNameInput.value || 'Я').slice(0, 1).toUpperCase();
-  }
-}
-editProfileBtn.addEventListener('click', openProfileModal);
-avatarEditBtn.addEventListener('click', openProfileModal);
-profileModalCancel.addEventListener('click', closeProfileModal);
-profileModal.addEventListener('mousedown', (e) => { if (e.target === profileModal) closeProfileModal(); });
-
-modalAvatarBtn.addEventListener('click', () => avatarInput.click());
-avatarInput.addEventListener('change', () => {
-  const file = avatarInput.files[0];
-  if (!file) return;
-  if (!file.type.startsWith('image/')) { showToast('Нужна картинка'); return; }
-  const reader = new FileReader();
-  reader.onload = (e) => { pendingAvatarDataUrl = e.target.result; renderAvatarPreview(pendingAvatarDataUrl); };
-  reader.readAsDataURL(file);
-  avatarInput.value = '';
-});
-modalAvatarRemove.addEventListener('click', () => { pendingAvatarDataUrl = ''; renderAvatarPreview(''); });
-profileNameInput.addEventListener('input', () => { if (!pendingAvatarDataUrl && !profile.avatar) renderAvatarPreview(''); });
-
-profileModalConfirm.addEventListener('click', async () => {
-  profile.name = profileNameInput.value.trim() || 'Мой профиль';
-  profile.bio  = profileBioInput.value.trim() || 'Здесь ваши картинки';
-  if (pendingAvatarDataUrl !== null) profile.avatar = pendingAvatarDataUrl;
-  await persistAll();
-  closeProfileModal();
-  render();
-  showToast('Профиль сохранён');
-});
-
-/* =========================================================
-   Профиль в UI
-   ========================================================= */
-function applyProfileToUI() {
-  profileNameEl.textContent = profile.name || 'Мой профиль';
-  profileBioEl.textContent  = profile.bio  || 'Здесь ваши картинки';
-  if (profile.avatar) {
-    avatarEl.style.backgroundImage = 'url(' + profile.avatar + ')';
-    avatarEl.textContent = '';
-  } else {
-    avatarEl.style.backgroundImage = '';
-    avatarEl.textContent = (profile.name || 'Я').slice(0, 1).toUpperCase();
-  }
-}
-
-/* =========================================================
-   Карточка
-   ========================================================= */
-function createCard(img, realIndex) {
-  const card = document.createElement('div');
-  card.className = 'card';
-
-  const image = document.createElement('img');
-  image.src = img.dataUrl;
-  image.alt = img.name || '';
-  image.loading = 'lazy';
-  image.addEventListener('click', () => openLightbox(img.dataUrl));
-
-  const badge = document.createElement('span');
-  badge.className = 'mine-badge';
-  badge.textContent = 'Моё';
-
-  const topActions = document.createElement('div');
-  topActions.className = 'card-top-actions';
-
-  const likeBtn = document.createElement('button');
-  likeBtn.type = 'button';
-  likeBtn.className = 'icon-btn' + (img.liked ? ' liked' : '');
-  likeBtn.innerHTML = img.liked ? '❤️' : '🤍';
-  likeBtn.title = img.liked ? 'Убрать лайк' : 'Нравится';
-  likeBtn.addEventListener('click', async (e) => {
-    e.stopPropagation();
-    images[realIndex].liked = !images[realIndex].liked;
-    await persistAll();
-    render();
-  });
-
-  const delBtn = document.createElement('button');
-  delBtn.type = 'button';
-  delBtn.className = 'icon-btn danger';
-  delBtn.innerHTML = '🗑️';
-  delBtn.title = 'Удалить';
-  delBtn.addEventListener('click', async (e) => {
-    e.stopPropagation();
-    const name = images[realIndex].name || 'картинку';
-    images.splice(realIndex, 1);
-    await persistAll();
-    render();
-    showToast('Удалено: ' + name);
-  });
-
-  topActions.appendChild(likeBtn);
-  topActions.appendChild(delBtn);
-
-  const bottom = document.createElement('div');
-  bottom.className = 'card-bottom';
-
-  const titleWrap = document.createElement('div');
-  titleWrap.className = 'title-wrap';
-
-  const titleSpan = document.createElement('span');
-  titleSpan.className = 'title-text';
-  titleSpan.textContent = img.name || 'Без названия';
-
-  const editBtn = document.createElement('button');
-  editBtn.type = 'button';
-  editBtn.className = 'edit-title-btn';
-  editBtn.innerHTML = '✏️';
-  editBtn.title = 'Изменить название';
-  editBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    openTitleModal('Изменить название', img.name, async (newName) => {
-      images[realIndex].name = newName || 'Без названия';
-      await persistAll();
-      render();
-      showToast('Название сохранено');
-    });
-  });
-
-  titleWrap.appendChild(titleSpan);
-  titleWrap.appendChild(editBtn);
-
-  const dateSpan = document.createElement('span');
-  dateSpan.textContent = new Date(img.time).toLocaleDateString('ru-RU');
-
-  bottom.appendChild(titleWrap);
-  bottom.appendChild(dateSpan);
-
-  card.appendChild(image);
-  card.appendChild(badge);
-  card.appendChild(topActions);
-  card.appendChild(bottom);
-  return card;
-}
-
-function fillGrid(gridEl, list, emptyHTML) {
-  gridEl.innerHTML = '';
-  if (list.length === 0) {
-    const empty = document.createElement('div');
-    empty.className = 'empty-state';
-    empty.innerHTML = emptyHTML;
-    gridEl.appendChild(empty);
-    return;
-  }
-  list.forEach(img => {
-    const realIndex = images.indexOf(img);
-    gridEl.appendChild(createCard(img, realIndex));
-  });
-}
-
-/* =========================================================
-   Рендер
-   ========================================================= */
-function render() {
-  if (currentScreen === 'help') return;
-  
-  applyProfileToUI();
-  const q = searchQuery.trim().toLowerCase();
-  const matches = img => !q || (img.name || '').toLowerCase().includes(q);
-
-  fillGrid(feedGrid, images.filter(matches),
-    q ? '<div class="big">🔍</div><div>Ничего не найдено по запросу «' + escapeHtml(q) + '»</div>'
-      : '<div class="big">🖼️</div><div>Пока пусто. Загрузите первую картинку!</div>');
-
-  fillGrid(profileGrid, images.filter(matches),
-    '<div class="big">📭</div><div>У вас пока нет картинок. Загрузите первую!</div>');
-
-  fillGrid(likedGrid, images.filter(img => img.liked && matches(img)),
-    '<div class="big">🤍</div><div>Вы пока ничего не лайкнули. Нажмите сердечко на картинке.</div>');
-
-  statCount.textContent = images.length;
-  statLikes.textContent = images.filter(i => i.liked).length;
-  statFollowers.textContent = profile.followers || 0;
-}
-function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
-}
-
-/* =========================================================
-   Загрузка картинок
-   ========================================================= */
-function handleFiles(files) {
-  if (!files || files.length === 0) return;
-  const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
-  if (imageFiles.length === 0) { showToast('Можно загружать только картинки'); return; }
-  const totalSize = imageFiles.reduce((s, f) => s + f.size, 0);
-  if (totalSize > 50 * 1024 * 1024) showToast('Файлы слишком большие (больше 50 МБ). Лучше по одной.');
-
-  const loaded = [];
-  let pending = imageFiles.length;
-  imageFiles.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      loaded.push({ dataUrl: e.target.result, originalName: file.name });
-      pending--;
-      if (pending === 0) askNamesSequentially(loaded);
-    };
-    reader.readAsDataURL(file);
-  });
-}
-function askNamesSequentially(items) {
-  let i = 0;
-  function next() {
-    if (i >= items.length) { render(); showToast('Загружено: ' + items.length); return; }
-    const item = items[i];
-    openTitleModal(
-      'Название для «' + item.originalName + '»',
-      item.originalName.replace(/\.[^.]+$/, ''),
-      async (name) => {
+    let loadedCount = 0;
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
         images.unshift({
-          dataUrl: item.dataUrl,
-          name: name || item.originalName.replace(/\.[^.]+$/, '') || 'Без названия',
+          dataUrl: e.target.result,
+          name: file.name.split('.')[0],
           time: Date.now(),
           liked: false
         });
-        await persistAll();
-        i++;
-        setTimeout(next, 50);
-      }
-    );
-  }
-  next();
-}
-
-uploadBtn.addEventListener('click', () => fileInput.click());
-uploadBtnProfile.addEventListener('click', () => fileInput.click());
-dropInner.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', () => { handleFiles(fileInput.files); fileInput.value = ''; });
-
-['dragenter', 'dragover'].forEach(evt => {
-  dropInner.addEventListener(evt, (e) => { e.preventDefault(); dropInner.classList.add('dragover'); });
-});
-['dragleave', 'drop'].forEach(evt => {
-  dropInner.addEventListener(evt, (e) => { e.preventDefault(); dropInner.classList.remove('dragover'); });
-});
-dropInner.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files));
-searchInput.addEventListener('input', () => { searchQuery = searchInput.value; if (currentScreen !== 'help') render(); });
-
-/* =========================================================
-   Помощь
-   ========================================================= */
-helpBtnProfile.addEventListener('click', () => switchScreen('help'));
-
-/* =========================================================
-   Лайтбокс
-   ========================================================= */
-function openLightbox(src) { lightboxImg.src = src; lightbox.classList.add('open'); }
-function closeLightbox() { lightbox.classList.remove('open'); lightboxImg.src = ''; }
-lightboxClose.addEventListener('click', closeLightbox);
-lightbox.addEventListener('mousedown', (e) => { if (e.target === lightbox) closeLightbox(); });
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    if (confirmClearModal.classList.contains('open')) { closeConfirmClear(); return; }
-    if (followersModal.classList.contains('open')) { closeFollowersModal(); return; }
-    if (!titleModal.classList.contains('open') && !profileModal.classList.contains('open') && !dataModal.classList.contains('open')) closeLightbox();
-  }
-});
-
-/* =========================================================
-   Друзья
-   ========================================================= */
-function openFollowersModal() {
-  const count = profile.followers || 0;
-  followersCountText.textContent = count === 0 ? 'Пока друзей нет.' : 'Друзей: ' + count;
-  followersModal.classList.add('open');
-}
-function closeFollowersModal() { followersModal.classList.remove('open'); }
-statFollowersBtn.addEventListener('click', openFollowersModal);
-followersModalClose.addEventListener('click', closeFollowersModal);
-followersModal.addEventListener('mousedown', (e) => { if (e.target === followersModal) closeFollowersModal(); });
-
-/* =========================================================
-   Модалка данных
-   ========================================================= */
-dataBtn.addEventListener('click', async () => {
-  dataModal.classList.add('open');
-  updateAutosaveStatus();
-  await updateStorageInfo();
-});
-dataModalClose.addEventListener('click', () => dataModal.classList.remove('open'));
-dataModal.addEventListener('mousedown', (e) => { if (e.target === dataModal) dataModal.classList.remove('open'); });
-
-/* =========================================================
-   Автосохранение
-   ========================================================= */
-function isFileSystemAccessSupported() {
-  return typeof window.showSaveFilePicker === 'function';
-}
-function updateAutosaveStatus() {
-  if (!isFileSystemAccessSupported()) {
-    autosaveStatusEl.innerHTML = '<span class="warn">Автосохранение в файл недоступно:</span> браузер не поддерживает File System Access API (нужен Chrome или Edge). Данные сохраняются в IndexedDB/localStorage и подгружаются автоматически, копию можно скачать кнопкой.';
-    enableAutosaveBtn.style.display = 'none';
-    return;
-  }
-  enableAutosaveBtn.style.display = '';
-  if (autosaveEnabled && autosaveHandle) {
-    autosaveStatusEl.innerHTML = '<span class="ok">Автосохранение включено:</span> файл «' + autosaveHandle.name + '». Сайт сам перезаписывает его после каждого изменения и сам читает при запуске.';
-    enableAutosaveBtn.textContent = '📁 Сменить файл автосохранения';
-  } else if (autosaveHandle) {
-    autosaveStatusEl.innerHTML = '<span class="warn">Автосохранение приостановлено:</span> нужно разрешение на запись в файл «' + autosaveHandle.name + '». Нажмите «Включить», чтобы подтвердить.';
-    enableAutosaveBtn.textContent = '📁 Подтвердить автосохранение';
-  } else {
-    autosaveStatusEl.innerHTML = 'Автосохранение в файл выключено. Включите — и сайт будет сам перезаписывать <b>' + AUTOSAVE_FILENAME + '</b> на диске и сам читать его при запуске.';
-    enableAutosaveBtn.textContent = '📁 Включить автосохранение в файл';
-  }
-}
-enableAutosaveBtn.addEventListener('click', async () => {
-  if (!isFileSystemAccessSupported()) { showToast('Браузер не поддерживает автосохранение в файл'); return; }
-  try {
-    const handle = await window.showSaveFilePicker({
-      suggestedName: AUTOSAVE_FILENAME,
-      types: [{ description: 'JSON резервная копия', accept: { 'application/json': ['.json'] } }]
-    });
-    autosaveHandle = handle;
-    await idbSet('autosaveHandle', handle);
-    const perm = await handle.requestPermission({ mode: 'readwrite' });
-    if (perm === 'granted') {
-      autosaveEnabled = true;
-      await writeAutosaveFile();
-      showToast('Автосохранение включено');
-    } else {
-      autosaveEnabled = false;
-      showToast('Разрешение не выдано — автосохранение выключено');
-    }
-    updateAutosaveStatus();
-  } catch (e) {
-    if (e && e.name !== 'AbortError') showToast('Не удалось включить автосохранение');
-  }
-});
-
-/* =========================================================
-   Экспорт / импорт
-   ========================================================= */
-function exportData() {
-  const blob = new Blob([JSON.stringify(buildBackupPayload(), null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const date = new Date().toISOString().slice(0, 10);
-  a.href = url;
-  a.download = 'pinboard-backup-' + date + '.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast('Резервная копия скачана');
-}
-exportBtn.addEventListener('click', exportData);
-exportBtnProfile.addEventListener('click', exportData);
-
-importBtn.addEventListener('click', () => importInput.click());
-importInput.addEventListener('change', () => {
-  const file = importInput.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!data || !Array.isArray(data.images)) { showToast('Неверный формат файла'); return; }
-      const replace = confirm('Заменить текущие данные? OK — заменить, Отмена — добавить к текущим.');
-      if (replace) {
-        images = data.images;
-        if (data.profile && typeof data.profile === 'object') {
-          profile = {
-            name: data.profile.name || 'Мой профиль',
-            bio: data.profile.bio || 'Здесь ваши картинки',
-            avatar: data.profile.avatar || '',
-            followers: typeof data.profile.followers === 'number' ? data.profile.followers : 0
-          };
+        loadedCount++;
+        if (loadedCount === files.length) {
+          saveData(); render();
+          showToast('Загружено: ' + files.length);
         }
-      } else {
-        const existing = new Set(images.map(i => i.dataUrl + '|' + i.name + '|' + i.time));
-        data.images.forEach(img => {
-          const key = img.dataUrl + '|' + img.name + '|' + img.time;
-          if (!existing.has(key)) images.push(img);
-        });
-      }
-      await persistAll();
-      render();
-      await updateStorageInfo();
-      showToast('Данные восстановлены');
-    } catch (err) {
-      showToast('Ошибка чтения файла');
+      };
+      reader.readAsDataURL(file);
+    });
+    inp.value = '';
+  }
+
+  function openProfileModal() {
+    document.getElementById('profileNameInput').value = profile.name;
+    document.getElementById('profileBioInput').value = profile.bio;
+    pendingAvatarUrl = null;
+    
+    const prev = document.getElementById('modalAvatarPreview');
+    if (profile.avatar) { prev.style.backgroundImage = `url(${profile.avatar})`; prev.textContent = ''; }
+    else { prev.style.backgroundImage = ''; prev.textContent = (profile.name || 'Я')[0].toUpperCase(); }
+    
+    document.getElementById('profileModal').classList.add('open');
+  }
+
+  function handleAvatarUpload(inp) {
+    const file = inp.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      pendingAvatarUrl = e.target.result;
+      const prev = document.getElementById('modalAvatarPreview');
+      prev.style.backgroundImage = `url(${pendingAvatarUrl})`;
+      prev.textContent = '';
+    };
+    reader.readAsDataURL(file);
+    inp.value = '';
+  }
+
+  function removeAvatar() {
+    pendingAvatarUrl = '';
+    const prev = document.getElementById('modalAvatarPreview');
+    prev.style.backgroundImage = '';
+    prev.textContent = (document.getElementById('profileNameInput').value || 'Я')[0].toUpperCase();
+  }
+
+  function saveProfile() {
+    profile.name = document.getElementById('profileNameInput').value.trim() || 'Мой профиль';
+    profile.bio = document.getElementById('profileBioInput').value.trim() || 'Здесь ваши картинки';
+    if (pendingAvatarUrl !== null) profile.avatar = pendingAvatarUrl;
+    saveData(); render();
+    document.getElementById('profileModal').classList.remove('open');
+    showToast('Профиль сохранен');
+  }
+
+  function saveTitle() {
+    if (editIndex !== -1) {
+      images[editIndex].name = document.getElementById('titleModalInput').value.trim() || 'Без названия';
+      saveData(); render();
     }
-  };
-  reader.readAsText(file);
-  importInput.value = '';
-});
+    document.getElementById('titleModal').classList.remove('open');
+  }
 
-/* =========================================================
-   Удаление всех данных
-   ========================================================= */
-function openConfirmClear() { confirmClearModal.classList.add('open'); }
-function closeConfirmClear() { confirmClearModal.classList.remove('open'); }
+  function openClearModal() {
+    document.getElementById('confirmClearModal').classList.add('open');
+  }
 
-clearAllBtn.addEventListener('click', openConfirmClear);
-confirmClearNo.addEventListener('click', closeConfirmClear);
+  function confirmClear() {
+    images = [];
+    profile = { name: 'Мой профиль', bio: 'Здесь ваши картинки', avatar: '' };
+    localStorage.removeItem('pinboard_imgs');
+    localStorage.removeItem('pinboard_prof');
+    document.getElementById('confirmClearModal').classList.remove('open');
+    render();
+    showToast('Все данные удалены');
+  }
 
-confirmClearYes.addEventListener('click', async () => {
-  closeConfirmClear();
-  images = [];
-  profile = { name: 'Мой профиль', bio: 'Здесь ваши картинки', avatar: '', followers: 0 };
+  function downloadFriendFile() {
+    if (images.length === 0) return showToast('Сначала загрузите картинки');
+    const dataToShare = { name: profile.name, images: images };
+    const blob = new Blob([JSON.stringify(dataToShare)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Pinboard_${profile.name}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Файл скачан! Отправьте его другу.');
+  }
 
-  await idbSet('images', []);
-  await idbSet('profile', profile);
+  function importFriendFile(inp) {
+    const file = inp.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (data.images && data.images.length > 0) {
+          friendImages = data.images.map(i => ({ ...i, isFriend: true }));
+          isViewingFriend = false;
+          document.getElementById('friendBannerText').textContent = `👀 Лента: Мои + ${data.name || 'Друг'}`;
+          switchScreen('feed');
+          showToast(`Загружены картинки друга`);
+        } else {
+          showToast('В файле нет картинок');
+        }
+      } catch(err) { showToast('Ошибка файла'); }
+    };
+    reader.readAsText(file);
+    inp.value = '';
+  }
 
-  try {
-    localStorage.removeItem(LS_IMAGES_KEY);
-    localStorage.removeItem(LS_PROFILE_KEY);
-  } catch (e) {}
+  function backToMyFeed() {
+    isViewingFriend = false;
+    friendImages = [];
+    render();
+    showToast('Вернулись к своим картинкам');
+  }
 
-  if (autosaveEnabled && autosaveHandle) queueAutosaveToFile();
+  const dropZone = document.getElementById('dropInner');
+  ['dragenter', 'dragover'].forEach(evt => {
+    dropZone.addEventListener(evt, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  });
+  ['dragleave', 'drop'].forEach(evt => {
+    dropZone.addEventListener(evt, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+  });
+  dropZone.addEventListener('drop', (e) => {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      document.getElementById('fileInput').files = files;
+      handleFileUpload(document.getElementById('fileInput'));
+    }
+  });
 
+  document.getElementById('searchInput').oninput = render;
   render();
-  await updateStorageInfo();
-  showToast('Все данные удалены');
-});
-
-confirmClearModal.addEventListener('mousedown', (e) => {
-  if (e.target === confirmClearModal) closeConfirmClear();
-});
-
-/* =========================================================
-   Инфо о хранилище
-   ========================================================= */
-async function updateStorageInfo() {
-  let text = '';
-  text += db ? 'IndexedDB: доступен ✅<br>' : 'IndexedDB: недоступен ⚠️ (используется localStorage)<br>';
-  try {
-    const raw = localStorage.getItem(LS_IMAGES_KEY) || '';
-    const sizeKb = Math.round(new Blob([raw]).size / 1024);
-    text += 'Резерв в localStorage: ' + sizeKb + ' КБ<br>';
-  } catch (e) { text += 'localStorage: недоступен<br>'; }
-  if (navigator.storage && navigator.storage.estimate) {
-    try {
-      const est = await navigator.storage.estimate();
-      const usedMb = (est.usage / (1024 * 1024)).toFixed(1);
-      const quotaMb = (est.quota / (1024 * 1024)).toFixed(0);
-      text += 'Использовано браузером: ' + usedMb + ' МБ из ~' + quotaMb + ' МБ<br>';
-    } catch (e) {}
-  }
-  text += 'Картинок: ' + images.length;
-  text += autosaveEnabled ? '<br>Файл автосохранения: <span style="color:#66bb6a;">активен</span>' : '<br>Файл автосохранения: не активен';
-  storageInfo.innerHTML = text;
-}
-
-/* =========================================================
-   Запуск
-   ========================================================= */
-async function init() {
-  await openDB();
-  await restoreAll();
-  render();
-  updateAutosaveStatus();
-
-  const hasData = images.length > 0 || profile.name !== 'Мой профиль' || profile.avatar || profile.followers > 0;
-  if (hasData) {
-    showToast('Данные восстановлены: ' + images.length + ' картинок');
-  } else {
-    showToast('Добро пожаловать! Всё сохраняется автоматически.');
-  }
-
-  if (autosaveHandle && !autosaveEnabled) {
-    try {
-      const perm = await autosaveHandle.queryPermission({ mode: 'readwrite' });
-      if (perm === 'granted') { autosaveEnabled = true; updateAutosaveStatus(); }
-    } catch (e) {}
-  }
-}
-init();
 </script>
-
 </body>
 </html>
