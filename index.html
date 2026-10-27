@@ -215,6 +215,8 @@
     <p>Нажмите <b>«📥 Загрузить от друга»</b> и выберите файл, который прислал друг.</p>
     <h3>4. Как сохранить картинку?</h3>
     <p>Нажмите на картинку, чтобы открыть её на весь экран. Внизу будет кнопка <b>«Скачать»</b>. Или нажмите на иконку <b>📥</b> прямо на карточке.</p>
+    <h3>5. Как удалить картинку?</h3>
+    <p>Нажмите на иконку <b>🗑️</b> на карточке. Вы можете удалять как свои картинки, так и картинки друга (они исчезнут из вашей ленты).</p>
   </div>
 </div>
 
@@ -257,7 +259,6 @@
   </div>
 </div>
 
-<!-- Модалка подтверждения очистки -->
 <div class="modal-overlay" id="confirmClearModal">
   <div class="modal" style="text-align: center;">
     <h3 style="color: #ff6b6b; font-size: 1.3rem;">Очистить всё?</h3>
@@ -408,19 +409,25 @@
     };
     top.appendChild(dlBtn);
 
-    if (type === 'mine') {
-      const delBtn = document.createElement('button');
-      delBtn.className = 'icon-btn danger';
-      delBtn.innerHTML = '🗑️';
-      delBtn.onclick = (e) => {
-        e.stopPropagation();
-        if (confirm('Удалить картинку?')) {
+    // УДАЛЕНИЕ ДЛЯ ВСЕХ КАРТИНОК
+    const delBtn = document.createElement('button');
+    delBtn.className = 'icon-btn danger';
+    delBtn.innerHTML = '🗑️';
+    delBtn.title = 'Удалить';
+    delBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (confirm('Удалить картинку?')) {
+        if (type === 'mine') {
           images = images.filter(i => i.time !== img.time);
-          saveData(); render();
+          saveData();
+        } else {
+          friendImages = friendImages.filter(i => i.time !== img.time);
         }
-      };
-      top.appendChild(delBtn);
-    }
+        render();
+        showToast('Картинка удалена');
+      }
+    };
+    top.appendChild(delBtn);
 
     const bottom = document.createElement('div');
     bottom.className = 'card-bottom';
