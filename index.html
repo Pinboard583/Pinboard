@@ -89,24 +89,37 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
   }
 
-  /* Обложка профиля */
+  /* УМЕНЬШЕННЫЙ БАННЕР */
   .profile-cover {
-    height: 220px;
+    height: 100px; /* Было 220px */
     background: linear-gradient(135deg, #e60023 0%, #ff6b6b 50%, #ffb74d 100%);
     position: relative;
+    overflow: hidden;
+  }
+  /* БЛЮР-ФОН ИЗ АВАТАРКИ */
+  .profile-cover-blur {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(24px) brightness(0.6);
+    transform: scale(1.2);
+    opacity: 0.8;
+    z-index: 0;
   }
   .profile-cover::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.1)" stroke-width="2" fill="none"/></svg>');
-    opacity: 0.3;
+    background: linear-gradient(to bottom, transparent 0%, rgba(26,26,29,0.5) 100%);
+    z-index: 1;
   }
 
   .profile-content {
     padding: 0 40px 40px 40px;
     position: relative;
-    margin-top: -60px;
+    margin-top: -50px; /* Поднял контент выше, так как баннер короче */
+    z-index: 2;
   }
 
   .profile-avatar-wrap {
@@ -115,17 +128,17 @@
     margin-bottom: 16px;
   }
   .profile-avatar {
-    width: 140px;
-    height: 140px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--accent), #ff6b6b);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 3.5rem;
+    font-size: 3rem;
     font-weight: 900;
     color: #fff;
-    border: 6px solid var(--surface);
+    border: 5px solid var(--surface);
     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     overflow: hidden;
     background-size: cover;
@@ -150,15 +163,15 @@
 
   .profile-edit-avatar {
     position: absolute;
-    bottom: 8px;
-    right: 8px;
-    width: 40px;
-    height: 40px;
+    bottom: 4px;
+    right: 4px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background: var(--surface);
     border: 3px solid var(--surface);
     color: var(--text);
-    font-size: 1.1rem;
+    font-size: 1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -195,7 +208,7 @@
 
   .profile-stats {
     display: flex;
-    gap: 32px;
+    gap: 20px;
     flex-wrap: wrap;
     margin-bottom: 24px;
   }
@@ -242,10 +255,10 @@
   }
 
   @media (max-width: 600px) {
-    .profile-content { padding: 0 20px 30px 20px; margin-top: -40px; }
-    .profile-avatar { width: 100px; height: 100px; font-size: 2.5rem; }
+    .profile-content { padding: 0 20px 30px 20px; margin-top: -30px; }
+    .profile-avatar { width: 90px; height: 90px; font-size: 2.5rem; }
     .profile-name { font-size: 1.5rem; }
-    .profile-cover { height: 140px; }
+    .profile-cover { height: 80px; }
     .profile-stat { padding: 10px 14px; min-width: 80px; }
   }
 
@@ -344,7 +357,9 @@
 <div class="screen" id="screen-profile">
   <div class="profile-screen">
     <div class="profile-card">
-      <div class="profile-cover"></div>
+      <div class="profile-cover" id="profileCover">
+        <div class="profile-cover-blur" id="profileCoverBlur"></div>
+      </div>
       <div class="profile-content">
         <div class="profile-avatar-wrap">
           <div class="avatar-glow"></div>
@@ -598,8 +613,19 @@
     document.getElementById('statLikes').textContent = mediaItems.filter(i => i.liked).length;
     
     const av = document.getElementById('avatar');
-    if (profile.avatar) { av.style.backgroundImage = `url(${profile.avatar})`; av.textContent = ''; }
-    else { av.style.backgroundImage = ''; av.textContent = (profile.name || 'Я')[0].toUpperCase(); }
+    const blurBg = document.getElementById('profileCoverBlur');
+    
+    if (profile.avatar) { 
+      av.style.backgroundImage = `url(${profile.avatar})`; 
+      av.textContent = ''; 
+      // БЛЮР-ФОН ИЗ АВАТАРКИ
+      blurBg.style.backgroundImage = `url(${profile.avatar})`;
+    }
+    else { 
+      av.style.backgroundImage = ''; 
+      av.textContent = (profile.name || 'Я')[0].toUpperCase(); 
+      blurBg.style.backgroundImage = '';
+    }
 
     document.getElementById('friendBanner').style.display = isViewingFriend ? 'flex' : 'none';
   }
