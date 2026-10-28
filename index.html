@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Pinboard — твоя коллекция</title>
 <style>
   :root {
@@ -12,11 +12,13 @@
     --glass: rgba(30, 30, 34, 0.65);
   }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  
-  /* ---------- ШАПКА САЙТА ---------- */
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+
+  /* =========================================
+     ШАПКА (Компьютер)
+     ========================================= */
   header {
-    position: sticky; top: 0; z-index: 50; background: rgba(15, 15, 17, 0.8); backdrop-filter: blur(16px);
+    position: sticky; top: 0; z-index: 50; background: rgba(15, 15, 17, 0.85); backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(255,255,255,0.05); padding: 12px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
   }
   .logo { font-size: 1.3rem; font-weight: 900; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
@@ -36,17 +38,19 @@
   .btn.blue { background: #2563eb; color: #fff; }
   .btn.blue:hover { background: #1d4ed8; box-shadow: 0 6px 20px rgba(37,99,235,0.3); }
   
-  /* ---------- ЭКРАНЫ ---------- */
+  /* =========================================
+     ОСНОВНЫЕ ЭКРАНЫ И СЕТКА
+     ========================================= */
   .screen { display: none; animation: fadeIn 0.3s ease; }
   .screen.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* ---------- СЕТКА ---------- */
   .grid { max-width: 1400px; margin: 24px auto 60px; padding: 0 24px; column-count: 4; column-gap: 20px; }
   @media (max-width: 1100px) { .grid { column-count: 3; } }
   @media (max-width: 800px) { .grid { column-count: 2; } }
-  @media (max-width: 500px) { .grid { column-count: 1; } }
-  
+  /* Мобильная сетка: 1 колонка */
+  @media (max-width: 600px) { .grid { column-count: 1; padding: 0 16px; gap: 16px; } }
+
   .card { break-inside: avoid; margin-bottom: 20px; background: var(--surface); border-radius: var(--radius); overflow: hidden; position: relative; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s; }
   .card:hover { transform: translateY(-5px) scale(1.01); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
   .card img, .card video { width: 100%; display: block; cursor: zoom-in; object-fit: cover; }
@@ -58,6 +62,9 @@
   
   .card-top-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 8px; z-index: 5; opacity: 0; transition: opacity 0.2s; }
   .card:hover .card-top-actions { opacity: 1; }
+  /* На телефоне кнопки видны всегда */
+  @media (max-width: 800px) { .card-top-actions { opacity: 1; } }
+  
   .icon-btn { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.95); color: #222; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: 0.2s; font-size: 1rem; }
   .icon-btn:hover { background: #fff; transform: scale(1.1); }
   .icon-btn.danger:hover { background: #ffebee; color: #c62828; }
@@ -74,205 +81,82 @@
   .empty-state { text-align: center; padding: 100px 20px; color: var(--muted); column-span: all; }
   .empty-state .big { font-size: 4rem; margin-bottom: 16px; opacity: 0.5; }
 
-  /* ---------- 🎨 КРАСИВАЯ СТРАНИЦА ПРОФИЛЯ ---------- */
-  .profile-screen {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 24px;
-  }
+  /* =========================================
+     КРАСИВАЯ СТРАНИЦА ПРОФИЛЯ
+     ========================================= */
+  .profile-screen { max-width: 1200px; margin: 40px auto; padding: 0 24px; }
+  .profile-card { position: relative; background: var(--surface); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+  
+  .profile-cover { height: 100px; background: linear-gradient(135deg, #e60023 0%, #ff6b6b 50%, #ffb74d 100%); position: relative; overflow: hidden; }
+  .profile-cover-blur { position: absolute; inset: 0; background-size: cover; background-position: center; filter: blur(24px) brightness(0.6); transform: scale(1.2); opacity: 0.8; z-index: 0; }
+  .profile-cover::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 0%, rgba(26,26,29,0.5) 100%); z-index: 1; }
 
-  .profile-card {
-    position: relative;
-    background: var(--surface);
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-  }
+  .profile-content { padding: 0 40px 40px 40px; position: relative; margin-top: -50px; z-index: 2; }
+  .profile-avatar-wrap { position: relative; display: inline-block; margin-bottom: 16px; }
+  .profile-avatar { width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #ff6b6b); display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 900; color: #fff; border: 5px solid var(--surface); box-shadow: 0 10px 40px rgba(0,0,0,0.5); overflow: hidden; background-size: cover; background-position: center; position: relative; z-index: 2; }
+  .avatar-glow { position: absolute; inset: -10px; border-radius: 50%; background: linear-gradient(135deg, #e60023, #ff6b6b, #ffb74d); filter: blur(20px); opacity: 0.6; z-index: 1; animation: pulse 3s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 0.4; transform: scale(0.95); } 50% { opacity: 0.7; transform: scale(1.05); } }
 
-  /* УМЕНЬШЕННЫЙ БАННЕР */
-  .profile-cover {
-    height: 100px; /* Было 220px */
-    background: linear-gradient(135deg, #e60023 0%, #ff6b6b 50%, #ffb74d 100%);
-    position: relative;
-    overflow: hidden;
-  }
-  /* БЛЮР-ФОН ИЗ АВАТАРКИ */
-  .profile-cover-blur {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    filter: blur(24px) brightness(0.6);
-    transform: scale(1.2);
-    opacity: 0.8;
-    z-index: 0;
-  }
-  .profile-cover::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, transparent 0%, rgba(26,26,29,0.5) 100%);
-    z-index: 1;
-  }
-
-  .profile-content {
-    padding: 0 40px 40px 40px;
-    position: relative;
-    margin-top: -50px; /* Поднял контент выше, так как баннер короче */
-    z-index: 2;
-  }
-
-  .profile-avatar-wrap {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 16px;
-  }
-  .profile-avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), #ff6b6b);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    font-weight: 900;
-    color: #fff;
-    border: 5px solid var(--surface);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    overflow: hidden;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    z-index: 2;
-  }
-  .avatar-glow {
-    position: absolute;
-    inset: -10px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #e60023, #ff6b6b, #ffb74d);
-    filter: blur(20px);
-    opacity: 0.6;
-    z-index: 1;
-    animation: pulse 3s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.4; transform: scale(0.95); }
-    50% { opacity: 0.7; transform: scale(1.05); }
-  }
-
-  .profile-edit-avatar {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--surface);
-    border: 3px solid var(--surface);
-    color: var(--text);
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    z-index: 3;
-    transition: 0.2s;
-  }
+  .profile-edit-avatar { position: absolute; bottom: 4px; right: 4px; width: 36px; height: 36px; border-radius: 50%; background: var(--surface); border: 3px solid var(--surface); color: var(--text); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 3; transition: 0.2s; }
   .profile-edit-avatar:hover { background: var(--surface-2); transform: scale(1.1); }
 
-  .profile-name-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
-  }
-  .profile-name {
-    font-size: 2rem;
-    font-weight: 900;
-    margin: 0;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #fff, #ccc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .profile-bio {
-    color: var(--muted);
-    font-size: 1rem;
-    margin-bottom: 24px;
-    max-width: 600px;
-    line-height: 1.5;
-  }
+  .profile-name-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+  .profile-name { font-size: 2rem; font-weight: 900; margin: 0; letter-spacing: -0.5px; background: linear-gradient(135deg, #fff, #ccc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .profile-bio { color: var(--muted); font-size: 1rem; margin-bottom: 24px; max-width: 600px; line-height: 1.5; }
 
-  .profile-stats {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-  }
-  .profile-stat {
-    display: flex;
-    flex-direction: column;
-    padding: 12px 20px;
-    background: var(--surface-2);
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.05);
-    min-width: 100px;
-  }
-  .profile-stat .num {
-    font-size: 1.5rem;
-    font-weight: 900;
-    background: linear-gradient(135deg, #e60023, #ff6b6b);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .profile-stat .label {
-    font-size: 0.7rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 4px;
-  }
+  .profile-stats { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 24px; }
+  .profile-stat { display: flex; flex-direction: column; padding: 12px 20px; background: var(--surface-2); border-radius: 14px; border: 1px solid rgba(255,255,255,0.05); min-width: 100px; }
+  .profile-stat .num { font-size: 1.5rem; font-weight: 900; background: linear-gradient(135deg, #e60023, #ff6b6b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .profile-stat .label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
-  .profile-actions {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
+  .profile-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
-  .profile-media-title {
-    max-width: 1200px;
-    margin: 40px auto 20px;
-    padding: 0 24px;
-    font-size: 1.3rem;
-    font-weight: 800;
-    letter-spacing: -0.3px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
+  /* =========================================
+     МОБИЛЬНАЯ АДАПТАЦИЯ
+     ========================================= */
   @media (max-width: 600px) {
-    .profile-content { padding: 0 20px 30px 20px; margin-top: -30px; }
-    .profile-avatar { width: 90px; height: 90px; font-size: 2.5rem; }
+    /* Шапка */
+    header { padding: 10px 16px; gap: 8px; justify-content: center; }
+    .logo { font-size: 1.1rem; width: 100%; justify-content: center; margin-bottom: 4px; }
+    .nav-tabs { width: 100%; justify-content: center; order: 2; }
+    .nav-tab { padding: 6px 12px; font-size: 0.75rem; }
+    .search-wrap { order: 3; width: 100%; min-width: 0; }
+    #uploadBtn { order: 4; width: 100%; }
+    #dataBtn { order: 5; width: 100%; }
+    
+    /* Профиль */
+    .profile-content { padding: 0 20px 30px 20px; margin-top: -40px; }
+    .profile-avatar { width: 100px; height: 100px; font-size: 2.5rem; }
     .profile-name { font-size: 1.5rem; }
     .profile-cover { height: 80px; }
     .profile-stat { padding: 10px 14px; min-width: 80px; }
+    .profile-actions { flex-direction: column; }
+    .profile-actions .btn { width: 100%; text-align: center; justify-content: center; }
+
+    /* Сетка 1 колонка */
+    .grid { column-count: 1; padding: 0 16px; }
+    .card { margin-bottom: 16px; }
+
+    /* Помощь */
+    .help-container { padding: 0 16px; }
   }
 
-  /* ---------- БАННЕР ДРУГА ---------- */
-  .share-banner { max-width: 1200px; margin: 20px auto 0; padding: 16px 24px; background: linear-gradient(90deg, rgba(249,115,22,0.15), rgba(249,115,22,0.05)); border: 1px solid rgba(249,115,22,0.3); border-radius: 16px; color: #fbbf24; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  /* =========================================
+     ПОМОЩЬ (Два блока: ПК и Телефон)
+     ========================================= */
+  .help-container { max-width: 900px; margin: 40px auto; padding: 0 24px; line-height: 1.7; }
+  .help-container h2 { font-size: 2rem; margin-bottom: 24px; font-weight: 900; text-align: center; }
+  
+  .help-section { background: var(--surface); border-radius: 20px; padding: 24px 32px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.05); }
+  .help-section h3 { font-size: 1.4rem; margin-top: 0; color: var(--accent); font-weight: 800; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .help-section p { margin-bottom: 12px; color: #c0c0c0; }
+  .help-section ul { margin-bottom: 16px; padding-left: 20px; color: #c0c0c0; }
+  .help-section li { margin-bottom: 10px; }
+  .help-section code { background: var(--surface-2); padding: 3px 8px; border-radius: 6px; font-family: monospace; }
 
-  /* ---------- ПОМОЩЬ ---------- */
-  .help-container { max-width: 800px; margin: 40px auto; padding: 0 24px; line-height: 1.7; }
-  .help-container h2 { font-size: 2rem; margin-bottom: 24px; font-weight: 900; }
-  .help-container h3 { font-size: 1.2rem; margin-top: 32px; margin-bottom: 12px; color: var(--accent); font-weight: 700; }
-  .help-container p { margin-bottom: 16px; color: #c0c0c0; }
-  .help-container code { background: var(--surface-2); padding: 3px 8px; border-radius: 6px; font-family: monospace; }
-
-  /* ---------- ЛАЙТБОКС ---------- */
+  /* =========================================
+     ЛАЙТБОКС
+     ========================================= */
   #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; backdrop-filter: blur(10px); }
   #lightbox.open { display: flex; animation: fadeIn 0.2s; }
   #lightboxContent img, #lightboxContent video { max-width: 90vw; max-height: 80vh; border-radius: 16px; box-shadow: 0 30px 80px rgba(0,0,0,0.9); object-fit: contain; }
@@ -282,7 +166,9 @@
   #lightbox .close { position: absolute; top: 24px; right: 28px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 48px; height: 48px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
   #lightbox .close:hover { background: rgba(255,255,255,0.3); transform: rotate(90deg); }
 
-  /* ---------- МОДАЛКИ ---------- */
+  /* =========================================
+     МОДАЛКИ
+     ========================================= */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 150; padding: 20px; }
   .modal-overlay.open { display: flex; animation: fadeIn 0.2s; }
   .modal { background: var(--surface); border-radius: 24px; padding: 32px; width: 100%; max-width: 480px; box-shadow: 0 30px 80px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05); }
@@ -299,7 +185,9 @@
   .modal-avatar-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
   .modal-avatar-preview { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #ff6b6b); background-size: cover; background-position: center; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; font-size: 1.5rem; }
 
-  /* ---------- ТОСТ ---------- */
+  /* =========================================
+     ТОСТ
+     ========================================= */
   #toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--surface-2); color: var(--text); padding: 14px 24px; border-radius: 999px; font-size: 0.9rem; font-weight: 500; box-shadow: 0 10px 40px rgba(0,0,0,0.6); opacity: 0; transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 200; pointer-events: none; text-align: center; max-width: 90vw; border: 1px solid rgba(255,255,255,0.1); }
   #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
@@ -335,7 +223,7 @@
 
 <!-- ЛЕНТА -->
 <div class="screen active" id="screen-feed">
-  <div class="share-banner" id="friendBanner" style="display: none;">
+  <div class="share-banner" id="friendBanner" style="display: none; max-width: 1200px; margin: 20px auto 0;">
     <span id="friendBannerText">👀 Вы просматриваете файлы друга</span>
     <button type="button" class="btn secondary" onclick="backToMyFeed()">Вернуться к своим</button>
   </div>
@@ -353,7 +241,7 @@
   <div id="feedGrid" class="grid"></div>
 </div>
 
-<!-- КРАСИВАЯ СТРАНИЦА ПРОФИЛЯ -->
+<!-- ПРОФИЛЬ -->
 <div class="screen" id="screen-profile">
   <div class="profile-screen">
     <div class="profile-card">
@@ -404,22 +292,60 @@
 <!-- ПОМОЩЬ -->
 <div class="screen" id="screen-help">
   <div class="help-container">
-    <h2>Как пользоваться Pinboard</h2>
+    <h2>📖 Помощь</h2>
     
-    <h3>1. Как добавить файлы?</h3>
-    <p>Нажмите «+ Загрузить» или перетащите файлы в ленту. Поддерживаются картинки и видео. <b>Важно:</b> видео может занимать много места, поэтому загружайте короткие ролики.</p>
-    
-    <h3>2. Почему картинки/видео друга исчезают?</h3>
-    <p><b>Обратите внимание:</b> файлы друга (с оранжевой плашкой «Друг») <b>не сохраняются в вашем браузере навсегда</b>. Они загружаются из файла и отображаются только до тех пор, пока вы не обновите страницу или не нажмёте «Вернуться к своим». Это сделано для того, чтобы профиль друга не перезаписывал ваш собственный.</p>
-    
-    <h3>3. Как поделиться с другом?</h3>
-    <p>Нажмите кнопку <b>«📤 Поделиться с другом»</b>. У вас скачается файл <code>.json</code>. Отправьте этот файл другу.</p>
-    
-    <h3>4. Как загрузить файлы друга?</h3>
-    <p>Нажмите <b>«📥 Загрузить от друга»</b> и выберите файл, который прислал друг. Его файлы появятся в ленте, а ваш профиль останется нетронутым.</p>
-    
-    <h3>5. Как сохранить файл?</h3>
-    <p>Нажмите на картинку или видео, чтобы открыть на весь экран. Внизу будет кнопка <b>«Скачать»</b>.</p>
+    <div class="help-section">
+      <h3>💻 Для компьютера</h3>
+      <p><b>Как загрузить файлы:</b></p>
+      <ul>
+        <li>Нажмите кнопку <b>«+ Загрузить»</b> в шапке или перетащите файлы прямо в ленту.</li>
+        <li>Вы можете перетащить сразу несколько файлов.</li>
+      </ul>
+      <p><b>Как редактировать профиль:</b></p>
+      <ul>
+        <li>Перейдите на вкладку <b>«Моя страница»</b>.</li>
+        <li>Нажмите на кнопку <b>«Редактировать профиль»</b> или кликните на аватарку (иконка 📷).</li>
+        <li>В открывшемся окне измените имя, описание и загрузите новую аватарку. Нажмите «Сохранить».</li>
+      </ul>
+      <p><b>Как поделиться с другом:</b></p>
+      <ul>
+        <li>Нажмите кнопку <b>«Поделиться»</b>. Скачается файл <code>.json</code>.</li>
+        <li>Отправьте этот файл другу в мессенджере (Телеграм, Ватсап, ВК).</li>
+        <li>Друг должен нажать <b>«Загрузить от друга»</b> и выбрать ваш файл.</li>
+      </ul>
+      <p><b>Как сохранить картинку/видео:</b></p>
+      <ul>
+        <li>Наведите курсор на карточку и нажмите иконку <b>📥</b> (скачать).</li>
+        <li>Или откройте картинку на весь экран (клик по ней) и нажмите <b>«Скачать файл»</b> внизу.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>📱 Для телефона</h3>
+      <p><b>Как загрузить файлы:</b></p>
+      <ul>
+        <li>Нажмите кнопку <b>«+ Загрузить»</b> вверху.</li>
+        <li>Выберите фото или видео из галереи телефона.</li>
+      </ul>
+      <p><b>Как редактировать профиль:</b></p>
+      <ul>
+        <li>Перейдите на вкладку <b>«Моя страница»</b>.</li>
+        <li>Нажмите на иконку 📷 на аватарке или кнопку <b>«Редактировать профиль»</b>.</li>
+        <li>Измените имя, описание и загрузите новое фото. Нажмите «Сохранить».</li>
+      </ul>
+      <p><b>Как поделиться с другом:</b></p>
+      <ul>
+        <li>Нажмите <b>«Поделиться»</b>. Файл <code>.json</code> скачается в память телефона.</li>
+        <li>Отправьте его другу через любой мессенджер.</li>
+        <li>Друг нажимает <b>«Загрузить от друга»</b> и выбирает ваш файл.</li>
+      </ul>
+      <p><b>Как сохранить картинку/видео:</b></p>
+      <ul>
+        <li>Нажмите на картинку, чтобы открыть её на весь экран.</li>
+        <li>Внизу нажмите кнопку <b>«Скачать файл»</b>.</li>
+      </ul>
+      <p><b>Важно:</b> файлы друга (с оранжевой плашкой «Друг») исчезают после обновления страницы. Это сделано, чтобы не перезаписывать ваш профиль.</p>
+    </div>
   </div>
 </div>
 
@@ -618,7 +544,6 @@
     if (profile.avatar) { 
       av.style.backgroundImage = `url(${profile.avatar})`; 
       av.textContent = ''; 
-      // БЛЮР-ФОН ИЗ АВАТАРКИ
       blurBg.style.backgroundImage = `url(${profile.avatar})`;
     }
     else { 
