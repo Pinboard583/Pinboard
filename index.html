@@ -48,11 +48,12 @@
   
   .card { break-inside: avoid; margin-bottom: 16px; background: var(--surface); border-radius: var(--radius); overflow: hidden; position: relative; transition: transform 0.2s; }
   .card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-  .card img { width: 100%; display: block; cursor: zoom-in; }
+  .card img, .card video { width: 100%; display: block; cursor: zoom-in; object-fit: cover; }
   
   .badge { position: absolute; top: 10px; left: 10px; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; pointer-events: none; z-index: 2;}
   .badge.mine { background: rgba(46, 125, 50, 0.9); }
   .badge.friend { background: rgba(255, 152, 0, 0.9); }
+  .badge.video { background: rgba(156, 39, 176, 0.9); left: 70px; }
   
   .card-top-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 5; }
   .icon-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(255,255,255,0.92); color: #222; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.25); transition: 0.1s; font-size: 1rem; }
@@ -70,7 +71,6 @@
   .empty-state { text-align: center; padding: 80px 20px; color: var(--muted); column-span: all; }
   .empty-state .big { font-size: 3rem; margin-bottom: 12px; }
   
-  /* --- Профиль --- */
   .profile-header { max-width: 1400px; margin: 32px auto 0; padding: 0 20px; display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
   .avatar-wrap { position: relative; flex-shrink: 0; }
   .avatar { width: 96px; height: 96px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #ff6b6b); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: #fff; box-shadow: 0 8px 24px rgba(230,0,35,0.35); overflow: hidden; background-size: cover; background-position: center; }
@@ -87,17 +87,15 @@
   .profile-upload { max-width: 1400px; margin: 16px auto 0; padding: 0 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
   .profile-section-title { max-width: 1400px; margin: 40px auto 0; padding: 0 20px; font-size: 1.1rem; font-weight: 700; }
   
-  /* --- Помощь --- */
   .help-container { max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
   .help-container h2 { font-size: 1.8rem; margin-bottom: 20px; }
   .help-container h3 { font-size: 1.2rem; margin-top: 30px; margin-bottom: 10px; color: var(--accent); }
   .help-container p, .help-container ul { margin-bottom: 15px; color: #d0d0d0; }
   .help-container code { background: var(--surface-2); padding: 2px 6px; border-radius: 4px; font-family: monospace; }
 
-  /* --- Лайтбокс --- */
   #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
   #lightbox.open { display: flex; }
-  #lightbox img { max-width: 90vw; max-height: 80vh; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); object-fit: contain; }
+  #lightboxContent img, #lightboxContent video { max-width: 90vw; max-height: 80vh; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); object-fit: contain; }
   
   .lightbox-controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
   .lightbox-controls button { background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 12px 24px; border-radius: 999px; font-size: 1rem; font-weight: 600; cursor: pointer; backdrop-filter: blur(5px); transition: 0.2s; }
@@ -106,7 +104,6 @@
   #lightbox .close { position: absolute; top: 20px; right: 24px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 1.4rem; cursor: pointer; }
   #lightbox .close:hover { background: rgba(255,255,255,0.25); }
   
-  /* --- Модалки --- */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 150; padding: 20px; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--surface); border-radius: 16px; padding: 24px; width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); max-height: 90vh; overflow-y: auto; }
@@ -129,10 +126,9 @@
 
   #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface-2); color: var(--text); padding: 12px 20px; border-radius: 999px; font-size: 0.85rem; box-shadow: 0 8px 30px rgba(0,0,0,0.5); opacity: 0; transition: 0.3s; z-index: 200; pointer-events: none; text-align: center; max-width: 90vw; }
   #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-  /* Переключатель языка */
-  .lang-btn { background: var(--surface-2); color: var(--text); border: none; padding: 10px 14px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
-  .lang-btn:hover { background: #383838; }
+  
+  #saveStatus { position: fixed; top: 80px; right: 20px; background: #4caf50; color: #fff; padding: 6px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; opacity: 0; transition: 0.3s; z-index: 200; pointer-events: none; }
+  #saveStatus.show { opacity: 1; }
 </style>
 </head>
 <body>
@@ -140,38 +136,37 @@
 <header>
   <div class="logo"><span class="dot"></span>Pinboard</div>
   <div class="nav-tabs">
-    <button type="button" class="nav-tab active" data-screen="feed" onclick="switchScreen('feed')" data-i18n="tab_feed">Лента</button>
-    <button type="button" class="nav-tab" data-screen="profile" onclick="switchScreen('profile')" data-i18n="tab_profile">Моя страница</button>
-    <button type="button" class="nav-tab" data-screen="liked" onclick="switchScreen('liked')" data-i18n="tab_liked">Понравившиеся</button>
-    <button type="button" class="nav-tab" data-screen="help" onclick="switchScreen('help')" data-i18n="tab_help">Помощь</button>
+    <button type="button" class="nav-tab active" data-screen="feed" onclick="switchScreen('feed')">Лента</button>
+    <button type="button" class="nav-tab" data-screen="profile" onclick="switchScreen('profile')">Моя страница</button>
+    <button type="button" class="nav-tab" data-screen="liked" onclick="switchScreen('liked')">Понравившиеся</button>
+    <button type="button" class="nav-tab" data-screen="help" onclick="switchScreen('help')">Помощь</button>
   </div>
   <div class="search-wrap">
     <span class="icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="Поиск по названию..." data-i18n-placeholder="search_placeholder">
+    <input type="text" id="searchInput" placeholder="Поиск по названию...">
   </div>
-  <button type="button" class="btn" onclick="document.getElementById('fileInput').click()" data-i18n="btn_upload">+ Загрузить</button>
-  <button type="button" class="btn secondary" onclick="openClearModal()" data-i18n="btn_clear">🗑️ Очистить</button>
-  <button type="button" class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
+  <button type="button" class="btn" onclick="document.getElementById('fileInput').click()">+ Загрузить</button>
+  <button type="button" class="btn secondary" onclick="openClearModal()">🗑️ Очистить</button>
   
-  <input type="file" id="fileInput" accept="image/*" multiple hidden onchange="handleFileUpload(this)">
+  <input type="file" id="fileInput" accept="image/*,video/*" multiple hidden onchange="handleFileUpload(this)">
   <input type="file" id="avatarInput" accept="image/*" hidden onchange="handleAvatarUpload(this)">
   <input type="file" id="importFileInput" accept=".json" hidden onchange="importFriendFile(this)">
 </header>
 
 <div class="screen active" id="screen-feed">
   <div class="share-banner" id="friendBanner" style="display: none;">
-    <span id="friendBannerText" data-i18n="banner_viewing">👀 Вы просматриваете картинки друга</span>
-    <button type="button" class="btn secondary" onclick="backToMyFeed()" data-i18n="btn_back">Вернуться к своим</button>
+    <span id="friendBannerText">👀 Вы просматриваете файлы друга</span>
+    <button type="button" class="btn secondary" onclick="backToMyFeed()">Вернуться к своим</button>
   </div>
 
   <div style="max-width: 1400px; margin: 20px auto 0; padding: 0 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-     <button type="button" class="btn blue" onclick="document.getElementById('importFileInput').click()" data-i18n="btn_import">📥 Загрузить от друга</button>
-     <button type="button" class="btn secondary" onclick="downloadFriendFile()" data-i18n="btn_share">📤 Поделиться с другом</button>
+     <button type="button" class="btn blue" onclick="document.getElementById('importFileInput').click()">📥 Загрузить от друга</button>
+     <button type="button" class="btn secondary" onclick="downloadFriendFile()">📤 Поделиться с другом</button>
   </div>
 
   <div id="dropZone">
-    <div class="drop-inner" id="dropInner" onclick="document.getElementById('fileInput').click()" data-i18n="drop_text">
-      Перетащите картинки сюда или <strong>нажмите, чтобы выбрать</strong>
+    <div class="drop-inner" id="dropInner" onclick="document.getElementById('fileInput').click()">
+      Перетащите картинки или видео сюда, либо <strong>нажмите, чтобы выбрать</strong>
     </div>
   </div>
   <div id="feedGrid" class="grid"></div>
@@ -186,215 +181,183 @@
     <div class="profile-info">
       <h2>
         <span id="profileName">Мой профиль</span>
-        <button type="button" class="btn secondary" onclick="openProfileModal()" style="font-size:0.8rem; padding:8px 14px;" data-i18n="btn_edit_profile">Редактировать</button>
+        <button type="button" class="btn secondary" onclick="openProfileModal()" style="font-size:0.8rem; padding:8px 14px;">Редактировать</button>
       </h2>
-      <div class="sub" id="profileBio" data-i18n="profile_bio">Здесь ваши картинки</div>
+      <div class="sub" id="profileBio">Здесь ваши файлы</div>
       <div class="stats">
-        <div class="stat"><span class="num" id="statCount">0</span><span class="label" data-i18n="stat_images">Картинок</span></div>
-        <div class="stat"><span class="num" id="statLikes">0</span><span class="label" data-i18n="stat_likes">Лайков</span></div>
+        <div class="stat"><span class="num" id="statCount">0</span><span class="label">Файлов</span></div>
+        <div class="stat"><span class="num" id="statLikes">0</span><span class="label">Лайков</span></div>
       </div>
     </div>
   </div>
   <div class="profile-upload">
-    <button type="button" class="btn" onclick="document.getElementById('fileInput').click()" data-i18n="btn_upload_profile">+ Загрузить на страницу</button>
-    <button type="button" class="btn blue" onclick="downloadFriendFile()" data-i18n="btn_share_profile">📤 Поделиться</button>
-    <button type="button" class="btn secondary" onclick="switchScreen('help')" style="margin-left: auto;" data-i18n="btn_help">❓ Помощь</button>
+    <button type="button" class="btn" onclick="document.getElementById('fileInput').click()">+ Загрузить на страницу</button>
+    <button type="button" class="btn blue" onclick="downloadFriendFile()">📤 Поделиться</button>
+    <button type="button" class="btn secondary" onclick="switchScreen('help')" style="margin-left: auto;">❓ Помощь</button>
   </div>
-  <div class="profile-section-title" data-i18n="title_my_images">Мои картинки</div>
+  <div class="profile-section-title">Мои файлы</div>
   <div id="profileGrid" class="grid"></div>
 </div>
 
 <div class="screen" id="screen-liked">
-  <div class="profile-section-title" style="margin-top:32px;" data-i18n="title_liked">Понравившиеся</div>
+  <div class="profile-section-title" style="margin-top:32px;">Понравившиеся</div>
   <div id="likedGrid" class="grid"></div>
 </div>
 
 <div class="screen" id="screen-help">
   <div class="help-container">
-    <h2 data-i18n="help_title">Как пользоваться Pinboard</h2>
+    <h2>Как пользоваться Pinboard</h2>
     
-    <h3 data-i18n="help_q1">1. Как добавить картинки?</h3>
-    <p data-i18n="help_a1">Нажмите «+ Загрузить» или перетащите файлы в ленту. Они сохранятся в браузере.</p>
+    <h3>1. Как добавить файлы?</h3>
+    <p>Нажмите «+ Загрузить» или перетащите файлы в ленту. Поддерживаются картинки и видео. <b>Важно:</b> видео может занимать много места, поэтому загружайте короткие ролики.</p>
     
-    <h3 data-i18n="help_q2">2. Как поделиться с другом?</h3>
-    <p data-i18n="help_a2">Нажмите кнопку «📤 Поделиться с другом». У вас скачается файл .json. Отправьте этот файл другу в мессенджере.</p>
+    <h3>2. Почему картинки/видео друга исчезают?</h3>
+    <p><b>Обратите внимание:</b> файлы друга (с оранжевой плашкой «Друг») <b>не сохраняются в вашем браузере навсегда</b>. Они загружаются из файла и отображаются только до тех пор, пока вы не обновите страницу или не нажмёте «Вернуться к своим». Это сделано для того, чтобы профиль друга не перезаписывал ваш собственный.</p>
     
-    <h3 data-i18n="help_q3">3. Как загрузить картинки друга?</h3>
-    <p data-i18n="help_a3">Нажмите «📥 Загрузить от друга» и выберите файл, который прислал друг. Его картинки появятся в ленте, а твой профиль останется нетронутым.</p>
+    <h3>3. Как поделиться с другом?</h3>
+    <p>Нажмите кнопку <b>«📤 Поделиться с другом»</b>. У вас скачается файл <code>.json</code>. Отправьте этот файл другу.</p>
     
-    <h3 data-i18n="help_q4">4. Как сохранить картинку?</h3>
-    <p data-i18n="help_a4">Нажмите на картинку, чтобы открыть её на весь экран. Внизу будет кнопка «Скачать». Или нажмите на иконку 📥 прямо на карточке.</p>
+    <h3>4. Как загрузить файлы друга?</h3>
+    <p>Нажмите <b>«📥 Загрузить от друга»</b> и выберите файл, который прислал друг. Его файлы появятся в ленте, а ваш профиль останется нетронутым.</p>
     
-    <h3 data-i18n="help_q5">5. Как удалить картинку?</h3>
-    <p data-i18n="help_a5">Нажмите на иконку 🗑️ на карточке. Вы можете удалять как свои картинки, так и картинки друга (они исчезнут из вашей ленты).</p>
+    <h3>5. Как сохранить файл?</h3>
+    <p>Нажмите на картинку или видео, чтобы открыть на весь экран. Внизу будет кнопка <b>«Скачать»</b>.</p>
   </div>
 </div>
 
 <div id="lightbox">
-  <button type="button" class="close" onclick="document.getElementById('lightbox').classList.remove('open')">✕</button>
-  <img id="lightboxImg" src="" alt="">
+  <button type="button" class="close" onclick="closeLightbox()">✕</button>
+  <div id="lightboxContent"></div>
   <div class="lightbox-controls">
-    <button type="button" onclick="downloadCurrentImage()" data-i18n="btn_download">💾 Скачать картинку</button>
+    <button type="button" onclick="downloadCurrentMedia()">💾 Скачать файл</button>
   </div>
 </div>
 
 <div class="modal-overlay" id="titleModal">
   <div class="modal">
-    <h3 data-i18n="modal_title">Название картинки</h3>
-    <input type="text" id="titleModalInput" placeholder="Введите название..." data-i18n-placeholder="modal_title_placeholder">
+    <h3>Название</h3>
+    <input type="text" id="titleModalInput" placeholder="Введите название...">
     <div class="actions">
-      <button type="button" class="cancel" onclick="document.getElementById('titleModal').classList.remove('open')" data-i18n="btn_cancel">Отмена</button>
-      <button type="button" class="confirm" onclick="saveTitle()" data-i18n="btn_save">Сохранить</button>
+      <button type="button" class="cancel" onclick="document.getElementById('titleModal').classList.remove('open')">Отмена</button>
+      <button type="button" class="confirm" onclick="saveTitle()">Сохранить</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="profileModal">
   <div class="modal">
-    <h3 data-i18n="modal_profile">Редактировать профиль</h3>
-    <label data-i18n="label_name">Имя</label>
-    <input type="text" id="profileNameInput" placeholder="Ваше имя" maxlength="40" data-i18n-placeholder="label_name_placeholder">
-    <label data-i18n="label_bio">Описание</label>
-    <textarea id="profileBioInput" rows="3" placeholder="Пара слов о себе" maxlength="160" data-i18n-placeholder="label_bio_placeholder"></textarea>
-    <label data-i18n="label_avatar">Аватар</label>
+    <h3>Редактировать профиль</h3>
+    <label>Имя</label>
+    <input type="text" id="profileNameInput" placeholder="Ваше имя" maxlength="40">
+    <label>Описание</label>
+    <textarea id="profileBioInput" rows="3" placeholder="Пара слов о себе" maxlength="160"></textarea>
+    <label>Аватар</label>
     <div class="modal-avatar-row">
       <div class="modal-avatar-preview" id="modalAvatarPreview">Я</div>
-      <button type="button" class="btn secondary" onclick="document.getElementById('avatarInput').click()" data-i18n="btn_load_avatar">Загрузить</button>
-      <button type="button" class="btn secondary" onclick="removeAvatar()" data-i18n="btn_remove_avatar">Убрать</button>
+      <button type="button" class="btn secondary" onclick="document.getElementById('avatarInput').click()">Загрузить</button>
+      <button type="button" class="btn secondary" onclick="removeAvatar()">Убрать</button>
     </div>
     <div class="actions">
-      <button type="button" class="cancel" onclick="document.getElementById('profileModal').classList.remove('open')" data-i18n="btn_cancel">Отмена</button>
-      <button type="button" class="confirm" onclick="saveProfile()" data-i18n="btn_save">Сохранить</button>
+      <button type="button" class="cancel" onclick="document.getElementById('profileModal').classList.remove('open')">Отмена</button>
+      <button type="button" class="confirm" onclick="saveProfile()">Сохранить</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="confirmClearModal">
   <div class="modal" style="text-align: center;">
-    <h3 style="color: #ff6b6b; font-size: 1.3rem;" data-i18n="modal_clear_title">Очистить всё?</h3>
-    <p style="color: var(--muted); margin-bottom: 20px;" data-i18n="modal_clear_text">Это навсегда удалит ВСЕ ваши картинки и профиль. Отменить будет нельзя.</p>
+    <h3 style="color: #ff6b6b; font-size: 1.3rem;">Очистить всё?</h3>
+    <p style="color: var(--muted); margin-bottom: 20px;">Это навсегда удалит ВСЕ ваши файлы и профиль. Отменить будет нельзя.</p>
     <div class="actions">
-      <button type="button" class="cancel" onclick="document.getElementById('confirmClearModal').classList.remove('open')" style="flex: 1;" data-i18n="btn_no">Нет, отмена</button>
-      <button type="button" class="confirm" onclick="confirmClear()" style="flex: 1; background: #d32f2f;" data-i18n="btn_yes">Да, удалить</button>
+      <button type="button" class="cancel" onclick="document.getElementById('confirmClearModal').classList.remove('open')" style="flex: 1;">Нет, отмена</button>
+      <button type="button" class="confirm" onclick="confirmClear()" style="flex: 1; background: #d32f2f;">Да, удалить</button>
     </div>
   </div>
 </div>
 
 <div id="toast"></div>
+<div id="saveStatus">Сохранено</div>
 
 <script>
-  // СЛОВАРИ ПЕРЕВОДА
-  const translations = {
-    ru: {
-      tab_feed: "Лента", tab_profile: "Моя страница", tab_liked: "Понравившиеся", tab_help: "Помощь",
-      search_placeholder: "Поиск по названию...", btn_upload: "+ Загрузить", btn_clear: "🗑️ Очистить",
-      banner_viewing: "👀 Вы просматриваете картинки друга", btn_back: "Вернуться к своим",
-      btn_import: "📥 Загрузить от друга", btn_share: "📤 Поделиться с другом",
-      drop_text: "Перетащите картинки сюда или нажмите, чтобы выбрать",
-      btn_edit_profile: "Редактировать", profile_bio: "Здесь ваши картинки",
-      stat_images: "Картинок", stat_likes: "Лайков",
-      btn_upload_profile: "+ Загрузить на страницу", btn_share_profile: "📤 Поделиться", btn_help: "❓ Помощь",
-      title_my_images: "Мои картинки", title_liked: "Понравившиеся",
-      help_title: "Как пользоваться Pinboard",
-      help_q1: "1. Как добавить картинки?", help_a1: "Нажмите «+ Загрузить» или перетащите файлы в ленту. Они сохранятся в браузере.",
-      help_q2: "2. Как поделиться с другом?", help_a2: "Нажмите кнопку «📤 Поделиться с другом». У вас скачается файл .json. Отправьте этот файл другу.",
-      help_q3: "3. Как загрузить картинки друга?", help_a3: "Нажмите «📥 Загрузить от друга» и выберите файл. Картинки появятся в ленте.",
-      help_q4: "4. Как сохранить картинку?", help_a4: "Нажмите на картинку, внизу будет кнопка «Скачать».",
-      help_q5: "5. Как удалить картинку?", help_a5: "Нажмите на иконку 🗑️ на карточке.",
-      btn_download: "💾 Скачать картинку", modal_title: "Название картинки", modal_title_placeholder: "Введите название...",
-      btn_cancel: "Отмена", btn_save: "Сохранить",
-      modal_profile: "Редактировать профиль", label_name: "Имя", label_name_placeholder: "Ваше имя",
-      label_bio: "Описание", label_bio_placeholder: "Пара слов о себе", label_avatar: "Аватар",
-      btn_load_avatar: "Загрузить", btn_remove_avatar: "Убрать",
-      modal_clear_title: "Очистить всё?", modal_clear_text: "Это навсегда удалит ВСЕ ваши картинки и профиль. Отменить будет нельзя.",
-      btn_no: "Нет, отмена", btn_yes: "Да, удалить"
-    },
-    en: {
-      tab_feed: "Feed", tab_profile: "My Page", tab_liked: "Liked", tab_help: "Help",
-      search_placeholder: "Search by title...", btn_upload: "+ Upload", btn_clear: "🗑️ Clear",
-      banner_viewing: "👀 You are viewing friend's images", btn_back: "Back to mine",
-      btn_import: "📥 Load from friend", btn_share: "📤 Share with friend",
-      drop_text: "Drag images here or click to select",
-      btn_edit_profile: "Edit", profile_bio: "Your images here",
-      stat_images: "Images", stat_likes: "Likes",
-      btn_upload_profile: "+ Upload to page", btn_share_profile: "📤 Share", btn_help: "❓ Help",
-      title_my_images: "My Images", title_liked: "Liked",
-      help_title: "How to use Pinboard",
-      help_q1: "1. How to add images?", help_a1: "Click '+ Upload' or drag files into the feed. They will be saved in your browser.",
-      help_q2: "2. How to share with a friend?", help_a2: "Click '📤 Share with friend'. A .json file will be downloaded. Send it to your friend.",
-      help_q3: "3. How to load friend's images?", help_a3: "Click '📥 Load from friend' and select the file. Images will appear in the feed.",
-      help_q4: "4. How to save an image?", help_a4: "Click on the image, a 'Download' button will appear at the bottom.",
-      help_q5: "5. How to delete an image?", help_a5: "Click the 🗑️ icon on the card.",
-      btn_download: "💾 Download image", modal_title: "Image title", modal_title_placeholder: "Enter title...",
-      btn_cancel: "Cancel", btn_save: "Save",
-      modal_profile: "Edit Profile", label_name: "Name", label_name_placeholder: "Your name",
-      label_bio: "Description", label_bio_placeholder: "A few words about you", label_avatar: "Avatar",
-      btn_load_avatar: "Upload", btn_remove_avatar: "Remove",
-      modal_clear_title: "Clear everything?", modal_clear_text: "This will permanently delete ALL your images and profile. It cannot be undone.",
-      btn_no: "No, cancel", btn_yes: "Yes, delete"
-    }
-  };
+  // ПЕРЕХОД НА INDEXEDDB
+  const DB_NAME = 'pinboardDB';
+  const DB_VERSION = 1;
+  const STORE_NAME = 'mediaStore';
 
-  let currentLang = localStorage.getItem('pinboard_lang') || 'ru';
-
-  function applyLanguage() {
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const key = el.getAttribute('data-i18n');
-      if (translations[currentLang][key]) {
-        // Для drop_text нужно особое обращение с html-тегами
-        if (key === 'drop_text') {
-          el.innerHTML = translations[currentLang][key].replace('нажмите, чтобы выбрать', '<strong>нажмите, чтобы выбрать</strong>').replace('click to select', '<strong>click to select</strong>');
-        } else {
-          el.textContent = translations[currentLang][key];
-        }
-      }
-    });
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-      const key = el.getAttribute('data-i18n-placeholder');
-      if (translations[currentLang][key]) {
-        el.placeholder = translations[currentLang][key];
-      }
-    });
-    
-    // Меняем текст кнопки переключения
-    document.getElementById('langBtn').textContent = currentLang === 'ru' ? 'EN' : 'RU';
-    
-    // Меняем title у документа
-    document.title = currentLang === 'ru' ? 'Pinboard — твоя коллекция' : 'Pinboard — your collection';
-    
-    // Сохраняем выбор
-    localStorage.setItem('pinboard_lang', currentLang);
-    
-    // Перерендериваем карточки (там даты)
-    render();
-  }
-
-  function toggleLang() {
-    currentLang = currentLang === 'ru' ? 'en' : 'ru';
-    applyLanguage();
-  }
-
-  // ОСНОВНОЙ КОД
-  let images = [];
-  let profile = { name: 'Мой профиль', bio: 'Здесь ваши картинки', avatar: '' };
-  let friendImages = [];
+  let db;
+  let mediaItems = [];
+  let profile = { name: 'Мой профиль', bio: 'Здесь ваши файлы', avatar: '' };
+  let friendMedia = [];
   let isViewingFriend = false;
-  let editIndex = -1;
+  let editId = null;
   let pendingAvatarUrl = null;
-  let currentLightboxUrl = '';
+  let currentLightboxItem = null;
 
-  try {
-    const savedImgs = localStorage.getItem('pinboard_imgs');
-    if (savedImgs) images = JSON.parse(savedImgs);
-    const savedProf = localStorage.getItem('pinboard_prof');
-    if (savedProf) profile = JSON.parse(savedProf);
-  } catch(e) { console.error('Ошибка загрузки', e); }
+  function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  }
 
-  function saveData() {
+  // ИНИЦИАЛИЗАЦИЯ БД
+  function initDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+        }
+      };
+      request.onsuccess = (e) => {
+        db = e.target.result;
+        resolve();
+      };
+      request.onerror = (e) => reject(e);
+    });
+  }
+
+  // СОХРАНЕНИЕ В БД
+  function saveToDB(item) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      store.put(item);
+      tx.oncomplete = () => resolve();
+      tx.onerror = (e) => reject(e);
+    });
+  }
+
+  // УДАЛЕНИЕ ИЗ БД
+  function deleteFromDB(id) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      store.delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = (e) => reject(e);
+    });
+  }
+
+  // ЗАГРУЗКА ВСЕГО ИЗ БД
+  function loadAllFromDB() {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = (e) => reject(e);
+    });
+  }
+
+  // ЗАГРУЗКА ПРОФИЛЯ
+  function loadProfile() {
     try {
-      localStorage.setItem('pinboard_imgs', JSON.stringify(images));
-      localStorage.setItem('pinboard_prof', JSON.stringify(profile));
-    } catch (e) { showToast('Память переполнена'); }
+      const saved = localStorage.getItem('pinboard_prof');
+      if (saved) profile = JSON.parse(saved);
+    } catch(e) { console.error(e); }
+  }
+
+  function saveProfile() {
+    localStorage.setItem('pinboard_prof', JSON.stringify(profile));
   }
 
   function showToast(msg) {
@@ -415,13 +378,13 @@
 
   function render() {
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
-    const matches = img => !q || (img.name || '').toLowerCase().includes(q);
+    const matches = item => !q || (item.name || '').toLowerCase().includes(q);
 
     let feedData = [];
     if (isViewingFriend) {
-      feedData = friendImages.filter(matches);
+      feedData = friendMedia.filter(matches);
     } else {
-      feedData = [...images.map(i => ({...i, isFriend: false})), ...friendImages.map(i => ({...i, isFriend: true}))]
+      feedData = [...mediaItems.map(i => ({...i, isFriend: false})), ...friendMedia.map(i => ({...i, isFriend: true}))]
                  .filter(matches)
                  .sort((a, b) => b.time - a.time);
     }
@@ -429,33 +392,33 @@
     const feedGrid = document.getElementById('feedGrid');
     feedGrid.innerHTML = '';
     if (feedData.length === 0) {
-      feedGrid.innerHTML = `<div class="empty-state"><div class="big">🖼️</div><div>${currentLang === 'ru' ? 'Пусто' : 'Empty'}</div></div>`;
+      feedGrid.innerHTML = `<div class="empty-state"><div class="big">🖼️</div><div>Пусто</div></div>`;
     } else {
-      feedData.forEach(img => feedGrid.appendChild(createCard(img, img.isFriend ? 'friend' : 'mine')));
+      feedData.forEach(item => feedGrid.appendChild(createCard(item, item.isFriend ? 'friend' : 'mine')));
     }
 
-    const myImages = images.filter(matches).sort((a, b) => b.time - a.time);
+    const myItems = mediaItems.filter(matches).sort((a, b) => b.time - a.time);
     const profileGrid = document.getElementById('profileGrid');
     profileGrid.innerHTML = '';
-    if (myImages.length === 0) {
-      profileGrid.innerHTML = `<div class="empty-state"><div class="big">📭</div><div>${currentLang === 'ru' ? 'Нет картинок' : 'No images'}</div></div>`;
+    if (myItems.length === 0) {
+      profileGrid.innerHTML = `<div class="empty-state"><div class="big">📭</div><div>Нет файлов</div></div>`;
     } else {
-      myImages.forEach(img => profileGrid.appendChild(createCard(img, 'mine')));
+      myItems.forEach(item => profileGrid.appendChild(createCard(item, 'mine')));
     }
 
     const likedData = feedData.filter(i => i.liked);
     const likedGrid = document.getElementById('likedGrid');
     likedGrid.innerHTML = '';
     if (likedData.length === 0) {
-      likedGrid.innerHTML = `<div class="empty-state"><div class="big">🤍</div><div>${currentLang === 'ru' ? 'Нет лайков' : 'No likes'}</div></div>`;
+      likedGrid.innerHTML = `<div class="empty-state"><div class="big">🤍</div><div>Нет лайков</div></div>`;
     } else {
-      likedData.forEach(img => likedGrid.appendChild(createCard(img, img.isFriend ? 'friend' : 'mine')));
+      likedData.forEach(item => likedGrid.appendChild(createCard(item, item.isFriend ? 'friend' : 'mine')));
     }
 
     document.getElementById('profileName').textContent = profile.name;
-    document.getElementById('profileBio').textContent = profile.bio || (currentLang === 'ru' ? 'Здесь ваши картинки' : 'Your images here');
-    document.getElementById('statCount').textContent = images.length;
-    document.getElementById('statLikes').textContent = images.filter(i => i.liked).length;
+    document.getElementById('profileBio').textContent = profile.bio;
+    document.getElementById('statCount').textContent = mediaItems.length;
+    document.getElementById('statLikes').textContent = mediaItems.filter(i => i.liked).length;
     
     const av = document.getElementById('avatar');
     if (profile.avatar) { av.style.backgroundImage = `url(${profile.avatar})`; av.textContent = ''; }
@@ -464,38 +427,58 @@
     document.getElementById('friendBanner').style.display = isViewingFriend ? 'flex' : 'none';
   }
 
-  function createCard(img, type) {
+  function createCard(item, type) {
     const card = document.createElement('div');
     card.className = 'card';
 
-    const image = document.createElement('img');
-    image.src = img.dataUrl;
-    image.loading = 'lazy';
-    image.onclick = () => {
-      currentLightboxUrl = img.dataUrl;
-      document.getElementById('lightboxImg').src = img.dataUrl;
-      document.getElementById('lightbox').classList.add('open');
+    let mediaElement;
+    if (item.isVideo) {
+      mediaElement = document.createElement('video');
+      mediaElement.src = item.dataUrl;
+      mediaElement.muted = true;
+      mediaElement.loop = true;
+      mediaElement.playsInline = true;
+      mediaElement.onmouseover = () => mediaElement.play();
+      mediaElement.onmouseout = () => mediaElement.pause();
+    } else {
+      mediaElement = document.createElement('img');
+      mediaElement.src = item.dataUrl;
+      mediaElement.loading = 'lazy';
+    }
+    
+    mediaElement.onclick = () => {
+      currentLightboxItem = item;
+      showLightbox(item);
     };
 
-    const badge = document.createElement('span');
-    badge.className = `badge ${type}`;
-    badge.textContent = type === 'mine' ? (currentLang === 'ru' ? 'Моё' : 'Mine') : (currentLang === 'ru' ? 'Друг' : 'Friend');
+    const badgeType = document.createElement('span');
+    badgeType.className = `badge ${type}`;
+    badgeType.textContent = type === 'mine' ? 'Моё' : 'Друг';
+    
+    if (item.isVideo) {
+      const badgeVideo = document.createElement('span');
+      badgeVideo.className = 'badge video';
+      badgeVideo.textContent = '▶️';
+      card.appendChild(badgeVideo);
+    }
 
     const top = document.createElement('div');
     top.className = 'card-top-actions';
 
     const likeBtn = document.createElement('button');
-    likeBtn.className = 'icon-btn' + (img.liked ? ' liked' : '');
-    likeBtn.innerHTML = img.liked ? '❤️' : '🤍';
-    likeBtn.onclick = (e) => {
+    likeBtn.className = 'icon-btn' + (item.liked ? ' liked' : '');
+    likeBtn.innerHTML = item.liked ? '❤️' : '🤍';
+    likeBtn.onclick = async (e) => {
       e.stopPropagation();
       if (type === 'mine') {
-        const realImg = images.find(i => i.time === img.time);
-        if (realImg) realImg.liked = !realImg.liked;
-        saveData();
+        const realItem = mediaItems.find(i => i.id === item.id);
+        if (realItem) {
+          realItem.liked = !realItem.liked;
+          await saveToDB(realItem);
+        }
       } else {
-        const realImg = friendImages.find(i => i.time === img.time);
-        if (realImg) realImg.liked = !realImg.liked;
+        const realItem = friendMedia.find(i => i.id === item.id);
+        if (realItem) realItem.liked = !realItem.liked;
       }
       render();
     };
@@ -504,28 +487,26 @@
     const dlBtn = document.createElement('button');
     dlBtn.className = 'icon-btn';
     dlBtn.innerHTML = '📥';
-    dlBtn.title = currentLang === 'ru' ? 'Скачать картинку' : 'Download image';
     dlBtn.onclick = (e) => {
       e.stopPropagation();
-      downloadImage(img.dataUrl, img.name);
+      downloadMedia(item.dataUrl, item.name, item.isVideo);
     };
     top.appendChild(dlBtn);
 
     const delBtn = document.createElement('button');
     delBtn.className = 'icon-btn danger';
     delBtn.innerHTML = '🗑️';
-    delBtn.title = currentLang === 'ru' ? 'Удалить' : 'Delete';
-    delBtn.onclick = (e) => {
+    delBtn.onclick = async (e) => {
       e.stopPropagation();
-      if (confirm(currentLang === 'ru' ? 'Удалить картинку?' : 'Delete image?')) {
+      if (confirm('Удалить файл?')) {
         if (type === 'mine') {
-          images = images.filter(i => i.time !== img.time);
-          saveData();
+          mediaItems = mediaItems.filter(i => i.id !== item.id);
+          await deleteFromDB(item.id);
         } else {
-          friendImages = friendImages.filter(i => i.time !== img.time);
+          friendMedia = friendMedia.filter(i => i.id !== item.id);
         }
         render();
-        showToast(currentLang === 'ru' ? 'Картинка удалена' : 'Image deleted');
+        showToast('Файл удален');
       }
     };
     top.appendChild(delBtn);
@@ -537,7 +518,7 @@
     titleWrap.className = 'title-wrap';
     const title = document.createElement('span');
     title.className = 'title-text';
-    title.textContent = img.name || (currentLang === 'ru' ? 'Без названия' : 'Untitled');
+    title.textContent = item.name || 'Без названия';
     titleWrap.appendChild(title);
 
     if (type === 'mine') {
@@ -546,8 +527,8 @@
       editBtn.innerHTML = '✏️';
       editBtn.onclick = (e) => {
         e.stopPropagation();
-        editIndex = images.findIndex(i => i.time === img.time);
-        document.getElementById('titleModalInput').value = img.name;
+        editId = item.id;
+        document.getElementById('titleModalInput').value = item.name;
         document.getElementById('titleModal').classList.add('open');
       };
       titleWrap.appendChild(editBtn);
@@ -555,56 +536,92 @@
 
     const date = document.createElement('span');
     date.className = 'date-text';
-    date.textContent = new Date(img.time).toLocaleDateString(currentLang === 'ru' ? 'ru-RU' : 'en-US');
+    date.textContent = new Date(item.time).toLocaleDateString('ru-RU');
 
     bottom.appendChild(titleWrap);
     bottom.appendChild(date);
 
-    card.appendChild(image);
-    card.appendChild(badge);
+    card.appendChild(mediaElement);
+    card.appendChild(badgeType);
     card.appendChild(top);
     card.appendChild(bottom);
     return card;
   }
 
-  function downloadImage(dataUrl, name) {
+  function showLightbox(item) {
+    const content = document.getElementById('lightboxContent');
+    content.innerHTML = '';
+    
+    if (item.isVideo) {
+      const video = document.createElement('video');
+      video.src = item.dataUrl;
+      video.controls = true;
+      video.autoplay = true;
+      video.style.maxWidth = '90vw';
+      video.style.maxHeight = '80vh';
+      content.appendChild(video);
+    } else {
+      const img = document.createElement('img');
+      img.src = item.dataUrl;
+      img.style.maxWidth = '90vw';
+      img.style.maxHeight = '80vh';
+      content.appendChild(img);
+    }
+    
+    document.getElementById('lightbox').classList.add('open');
+  }
+
+  function closeLightbox() {
+    const content = document.getElementById('lightboxContent');
+    const video = content.querySelector('video');
+    if (video) video.pause();
+    content.innerHTML = '';
+    document.getElementById('lightbox').classList.remove('open');
+  }
+
+  function downloadMedia(dataUrl, name, isVideo) {
     const a = document.createElement('a');
     a.href = dataUrl;
-    a.download = (name || 'image') + '.jpg';
+    a.download = (name || 'media') + (isVideo ? '.mp4' : '.jpg');
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    showToast(currentLang === 'ru' ? 'Картинка скачана' : 'Image downloaded');
+    showToast('Файл скачан');
   }
 
-  function downloadCurrentImage() {
-    if (currentLightboxUrl) {
-      downloadImage(currentLightboxUrl, 'pinboard_image');
+  function downloadCurrentMedia() {
+    if (currentLightboxItem) {
+      downloadMedia(currentLightboxItem.dataUrl, currentLightboxItem.name, currentLightboxItem.isVideo);
     }
   }
 
-  function handleFileUpload(inp) {
-    const files = Array.from(inp.files).filter(f => f.type.startsWith('image/'));
+  async function handleFileUpload(inp) {
+    const files = Array.from(inp.files).filter(f => f.type.startsWith('image/') || f.type.startsWith('video/'));
     if (!files.length) return;
 
     let loadedCount = 0;
-    files.forEach(file => {
+    for (const file of files) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        images.unshift({
+      reader.onload = async (e) => {
+        const newItem = {
+          id: generateId(),
           dataUrl: e.target.result,
           name: file.name.split('.')[0],
           time: Date.now(),
-          liked: false
-        });
+          liked: false,
+          isVideo: file.type.startsWith('video/')
+        };
+        mediaItems.unshift(newItem);
+        await saveToDB(newItem);
+        
         loadedCount++;
         if (loadedCount === files.length) {
-          saveData(); render();
-          showToast((currentLang === 'ru' ? 'Загружено: ' : 'Uploaded: ') + files.length);
+          render();
+          showToast('Загружено: ' + files.length);
         }
       };
       reader.readAsDataURL(file);
-    });
+    }
     inp.value = '';
   }
 
@@ -612,11 +629,9 @@
     document.getElementById('profileNameInput').value = profile.name;
     document.getElementById('profileBioInput').value = profile.bio;
     pendingAvatarUrl = null;
-    
     const prev = document.getElementById('modalAvatarPreview');
     if (profile.avatar) { prev.style.backgroundImage = `url(${profile.avatar})`; prev.textContent = ''; }
     else { prev.style.backgroundImage = ''; prev.textContent = (profile.name || 'Я')[0].toUpperCase(); }
-    
     document.getElementById('profileModal').classList.add('open');
   }
 
@@ -641,40 +656,47 @@
     prev.textContent = (document.getElementById('profileNameInput').value || 'Я')[0].toUpperCase();
   }
 
-  function saveProfile() {
-    profile.name = document.getElementById('profileNameInput').value.trim() || (currentLang === 'ru' ? 'Мой профиль' : 'My Profile');
-    profile.bio = document.getElementById('profileBioInput').value.trim() || (currentLang === 'ru' ? 'Здесь ваши картинки' : 'Your images here');
+  function saveProfileSettings() {
+    profile.name = document.getElementById('profileNameInput').value.trim() || 'Мой профиль';
+    profile.bio = document.getElementById('profileBioInput').value.trim() || 'Здесь ваши файлы';
     if (pendingAvatarUrl !== null) profile.avatar = pendingAvatarUrl;
-    saveData(); render();
+    saveProfile(); render();
     document.getElementById('profileModal').classList.remove('open');
-    showToast(currentLang === 'ru' ? 'Профиль сохранен' : 'Profile saved');
+    showToast('Профиль сохранен');
   }
 
-  function saveTitle() {
-    if (editIndex !== -1) {
-      images[editIndex].name = document.getElementById('titleModalInput').value.trim() || (currentLang === 'ru' ? 'Без названия' : 'Untitled');
-      saveData(); render();
+  async function saveTitle() {
+    if (editId) {
+      const item = mediaItems.find(i => i.id === editId);
+      if (item) {
+        item.name = document.getElementById('titleModalInput').value.trim() || 'Без названия';
+        await saveToDB(item);
+        render();
+      }
     }
     document.getElementById('titleModal').classList.remove('open');
   }
 
-  function openClearModal() {
-    document.getElementById('confirmClearModal').classList.add('open');
-  }
+  function openClearModal() { document.getElementById('confirmClearModal').classList.add('open'); }
 
-  function confirmClear() {
-    images = [];
-    profile = { name: 'Мой профиль', bio: 'Здесь ваши картинки', avatar: '' };
-    localStorage.removeItem('pinboard_imgs');
+  async function confirmClear() {
+    mediaItems = [];
+    profile = { name: 'Мой профиль', bio: 'Здесь ваши файлы', avatar: '' };
     localStorage.removeItem('pinboard_prof');
+    
+    // Очищаем IndexedDB
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    store.clear();
+    
     document.getElementById('confirmClearModal').classList.remove('open');
     render();
-    showToast(currentLang === 'ru' ? 'Все данные удалены' : 'All data cleared');
+    showToast('Все данные удалены');
   }
 
   function downloadFriendFile() {
-    if (images.length === 0) return showToast(currentLang === 'ru' ? 'Сначала загрузите картинки' : 'Upload images first');
-    const dataToShare = { name: profile.name, images: images };
+    if (mediaItems.length === 0) return showToast('Сначала загрузите файлы');
+    const dataToShare = { name: profile.name, images: mediaItems };
     const blob = new Blob([JSON.stringify(dataToShare)], {type: 'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -684,7 +706,7 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showToast(currentLang === 'ru' ? 'Файл скачан! Отправьте его другу.' : 'File downloaded! Send it to your friend.');
+    showToast('Файл скачан! Отправьте его другу.');
   }
 
   function importFriendFile(inp) {
@@ -695,15 +717,19 @@
       try {
         const data = JSON.parse(e.target.result);
         if (data.images && data.images.length > 0) {
-          friendImages = data.images.map(i => ({ ...i, isFriend: true }));
+          friendMedia = data.images.map(i => ({ 
+            ...i, 
+            isFriend: true,
+            isVideo: i.isVideo || (i.dataUrl && i.dataUrl.startsWith('data:video'))
+          }));
           isViewingFriend = false;
-          document.getElementById('friendBannerText').textContent = (currentLang === 'ru' ? '👀 Лента: Мои + ' : '👀 Feed: Mine + ') + (data.name || 'Friend');
+          document.getElementById('friendBannerText').textContent = `👀 Лента: Мои + ${data.name || 'Друг'}`;
           switchScreen('feed');
-          showToast(currentLang === 'ru' ? 'Загружены картинки друга' : 'Friend images loaded');
+          showToast(`Загружены файлы друга`);
         } else {
-          showToast(currentLang === 'ru' ? 'В файле нет картинок' : 'No images in file');
+          showToast('В файле нет файлов');
         }
-      } catch(err) { showToast(currentLang === 'ru' ? 'Ошибка файла' : 'File error'); }
+      } catch(err) { showToast('Ошибка файла'); }
     };
     reader.readAsText(file);
     inp.value = '';
@@ -711,9 +737,9 @@
 
   function backToMyFeed() {
     isViewingFriend = false;
-    friendImages = [];
+    friendMedia = [];
     render();
-    showToast(currentLang === 'ru' ? 'Вернулись к своим картинкам' : 'Back to your images');
+    showToast('Вернулись к своим файлам');
   }
 
   const dropZone = document.getElementById('dropInner');
@@ -732,9 +758,17 @@
   });
 
   document.getElementById('searchInput').oninput = render;
-  
-  // Инициализация
-  applyLanguage();
+
+  // ОБНОВЛЕНИЕ КНОПКИ ПРОФИЛЯ
+  document.getElementById('profileModal').querySelector('.confirm').onclick = saveProfileSettings;
+
+  // СТАРТ
+  initDB().then(async () => {
+    loadProfile();
+    mediaItems = await loadAllFromDB();
+    mediaItems.sort((a, b) => b.time - a.time);
+    render();
+  }).catch(e => console.error('Ошибка БД:', e));
 </script>
 </body>
 </html>
